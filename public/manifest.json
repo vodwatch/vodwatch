@@ -12,7 +12,7 @@
   "permissions": ["tabs"],
   "content_scripts": [
     {
-      "matches": ["https://www.netflix.com/watch/*"],
+      "matches": ["https://www.netflix.com/*"],
       "js": ["content.js"]
     }
   ]

@@ -20,4 +20,4 @@ Extension `manifest.json` file is stored in the `/public` folder, the same as `i
 
 ## Extension workflow
 
-When user opens the browser, `background script` checks if user is on the netflix video. If user opened the video from netflix page, then `background script` reloads the page in order to start `content script` execution. If `background script` didn't reload the page `content script` would not start because the video was clicked from the link, which doesn't reload the page, and content script only starts on the page load.
+When user opens the browser, `background script` checks if user is on the netflix video. If user opened the video from netflix page, then `background script` sends the message to `content script` that it can start to get an information about netflix videos.

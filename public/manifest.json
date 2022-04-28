@@ -5,5 +5,15 @@
   "action": {
     "default_popup": "index.html",
     "default_title": "Hello World"
-  }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/watch/*"],
+      "js": ["content.js"]
+    }
+  ]
 }

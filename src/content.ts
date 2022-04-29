@@ -21,6 +21,7 @@ if (document.location.href.includes(substring)) {
   waitForVideoToLoad();
 }
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  waitForVideoToLoad();
   let video = document.getElementsByTagName("video");
   console.log(video, "from background!");
   sendResponse({});

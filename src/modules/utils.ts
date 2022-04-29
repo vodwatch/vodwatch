@@ -1,4 +1,4 @@
-export const waitForElementToLoad = (selector : string): Promise<Element> => {
+export const waitForElementToLoad = (selector: string): Promise<Element> => {
     return new Promise<Element>(resolve => {
         const el = document.querySelector(selector)!;
         if (el) {
@@ -16,4 +16,4 @@ export const waitForElementToLoad = (selector : string): Promise<Element> => {
             subtree: true
         });
     });
-  }
+}

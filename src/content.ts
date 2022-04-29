@@ -1,12 +1,12 @@
-console.log("Hi, I'm content script!");
+import { addVideoEventListeners } from './modules/video';
+
 let substring = "https://www.netflix.com/watch";
 if (document.location.href.includes(substring)) {
-  let video = document.getElementsByTagName("video");
-  console.log(video, "from content!");
+  addVideoEventListeners();
 }
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  let video = document.getElementsByTagName("video");
-  console.log(video, "from background!");
+  addVideoEventListeners();
   sendResponse({});
   return true;
 });

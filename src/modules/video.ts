@@ -12,15 +12,14 @@ const handleVideoEvent = async (event: Event) => {
     event: event.type,
     currentTime: video.currentTime,
   };
-  let url = "https://eo7um282z6e6328.m.pipedream.net"; // swap this url later for our servers one!!!
+  let url = "http://localhost:8000/eventInfo/"; // swap this url later for our servers one!!!
   try {
     // axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";  <--- if CORS ERROR, but probably it will be servers fault!!!
     let response = await axios({
       method: "post",
       url: url,
-      data: {
-        eventInfo,
-      },
+      data: eventInfo,
+      headers: { "Content-Type": "application/json" },
     });
     console.log(response, "Response from server!!!");
   } catch (error) {

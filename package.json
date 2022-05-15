@@ -21,6 +21,7 @@
   "homepage": "https://github.com/vodwatch/vodwatch#readme",
   "jest": {
     "automock": false,
+    "resetMocks": false,
     "setupFiles": [
       "./setupJest.ts"
     ]

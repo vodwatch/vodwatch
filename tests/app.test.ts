@@ -1,13 +1,11 @@
-const { enableFetchMocks } = require('jest-fetch-mock')
+import fetch from 'jest-fetch-mock';
+import fetchMock from 'jest-fetch-mock';
 
-enableFetchMocks();
-
-beforeEach(() => {
-    fetch.resetMocks();
-});
+fetchMock.enableMocks();
 
 const getRequest = async () => {
     try {
+        
         const response = await fetch("http://localhost:8080/some_endpoint");
         const data = await response.json();
         return data;
@@ -19,6 +17,7 @@ const getRequest = async () => {
 test('Test example', () => {
     expect("hello " + "world").toBe("hello world");
 });
+
 
 test("Test fetch example", async () => {
     fetch.mockResponseOnce(JSON.stringify({ key: "value"}));

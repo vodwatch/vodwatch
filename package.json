@@ -19,13 +19,7 @@
     "url": "https://github.com/vodwatch/vodwatch/issues"
   },
   "homepage": "https://github.com/vodwatch/vodwatch#readme",
-  "jest": {
-    "automock": false,
-    "resetMocks": false,
-    "setupFiles": [
-      "./setupJest.ts"
-    ]
-  },
+
   "devDependencies": {
     "@types/chrome": "^0.0.181",
     "axios": "^0.27.2",

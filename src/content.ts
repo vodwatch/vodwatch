@@ -1,4 +1,4 @@
-import { addVideoEventListeners } from './modules/video';
+import { addVideoEventListeners } from "./modules/video";
 
 let substring = "https://www.netflix.com/watch";
 if (document.location.href.includes(substring)) {

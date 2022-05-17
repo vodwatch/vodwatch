@@ -44,6 +44,3 @@ export const addEventListeners = (video: Element) => {
   video.addEventListener("pause", handleVideoEvent);
   video.addEventListener("seeked", handleVideoEvent);
 };
-//TO TEST:
-//addVideoEventListeners
-//handleVideoEvent

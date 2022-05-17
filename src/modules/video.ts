@@ -26,10 +26,10 @@ export const postData = async (url: string, eventInfo: EventInfo) => {
     let response = await axios.post(url, eventInfo, {
       headers: headers,
     });
-    //console.log(response, "Response from server!!!");
+    console.log(response, "Response from server!!!");
     return response.status;
   } catch (error: any) {
-    //console.error(error, "Error with POST request!!!");
+    console.error(error, "Error with POST request!!!");
     return error.status;
   }
 };

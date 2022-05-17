@@ -1,5 +1,8 @@
-import { postData, EventInfo } from "../src/modules/video";
+import { postData, EventInfo, addEventListeners } from "../src/modules/video";
 import axios from "axios";
+import { JSDOM } from "jsdom";
+const dom = new JSDOM();
+global.document = dom.window.document;
 
 let url = "";
 let body = {};
@@ -14,7 +17,7 @@ jest.mock("axios", () => ({
   }),
 }));
 
-describe("Check post request", () => {
+describe("Check post requests: ", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -61,4 +64,11 @@ describe("Check post request", () => {
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(result).toBe(0);
   });
+});
+test("Check adding event listeners function: ", async () => {
+  jest.restoreAllMocks();
+  const video = document.createElement("video");
+  jest.spyOn(video, "addEventListener");
+  addEventListeners(video);
+  expect(video.addEventListener).toBeCalledTimes(3);
 });

@@ -1,39 +1,40 @@
 import { waitForElementToLoad } from "./utils";
-import axios from "axios";
+import { io, Socket } from "socket.io-client";
 
 interface EventInfo {
   event: string;
   currentTime: number;
 }
-
-const handleVideoEvent = async (event: Event) => {
-  const video = event.target as HTMLVideoElement;
-  let eventInfo: EventInfo = {
-    event: event.type,
-    currentTime: video.currentTime,
+export class videoHandler {
+  socket!: Socket;
+  handleVideoEvent = async (event: Event) => {
+    const video = event.target as HTMLVideoElement;
+    let eventInfo: EventInfo = {
+      event: event.type,
+      currentTime: video.currentTime,
+    };
+    if (this.socket.connected) {
+      this.socket.emit("event", eventInfo.event, (response: string) => {
+        console.log(response); // "got it"
+      });
+    }
+    console.log(video.currentTime);
+    console.log(event.type);
   };
-  let url = "http://localhost:8000/eventInfo/"; // swap this url later for our servers one!!!
-  try {
-    // axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";  <--- if CORS ERROR, but probably it will be servers fault!!!
-    let response = await axios({
-      method: "post",
-      url: url,
-      data: eventInfo,
-      headers: { "Content-Type": "application/json" },
+  addVideoEventListeners = async () => {
+    const video = await waitForElementToLoad("video");
+    const url = "http://localhost:5000";
+    if (video) {
+      video.addEventListener("play", this.handleVideoEvent);
+      video.addEventListener("pause", this.handleVideoEvent);
+      video.addEventListener("seeked", this.handleVideoEvent);
+    }
+    this.socket = io(url);
+    this.socket.on("connect", () => {
+      console.log(this.socket.connected); // true
     });
-    console.log(response, "Response from server!!!");
-  } catch (error) {
-    console.error(error, "Error with POST request!!!");
-  }
-  console.log(video.currentTime);
-  console.log(event.type);
-};
-
-export const addVideoEventListeners = async () => {
-  const video = await waitForElementToLoad("video");
-  if (video) {
-    video.addEventListener("play", handleVideoEvent);
-    video.addEventListener("pause", handleVideoEvent);
-    video.addEventListener("seeked", handleVideoEvent);
-  }
-};
+    this.socket.on("disconnect", () => {
+      console.log(this.socket.connected); // true
+    });
+  };
+}

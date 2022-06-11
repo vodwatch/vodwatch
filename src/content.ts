@@ -1,12 +1,12 @@
-import { addVideoEventListeners } from './modules/video';
-
+import { videoHandler } from "./modules/video";
+const videoHandlerInstance = new videoHandler();
 let substring = "https://www.netflix.com/watch";
 if (document.location.href.includes(substring)) {
-  addVideoEventListeners();
+  videoHandlerInstance.addVideoEventListeners();
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  addVideoEventListeners();
+  videoHandlerInstance.addVideoEventListeners();
   sendResponse({});
   return true;
 });

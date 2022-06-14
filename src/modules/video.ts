@@ -1,40 +1,37 @@
 import { waitForElementToLoad } from "./utils";
-import { io, Socket } from "socket.io-client";
+import { ClientSocketHandler } from "./socket";
 
-interface EventInfo {
+export interface EventInfo {
   event: string;
   currentTime: number;
 }
+
 export class videoHandler {
-  socket!: Socket;
+
+  socketHandler!: ClientSocketHandler
+
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
-    let eventInfo: EventInfo = {
+    const eventInfo: EventInfo = {
       event: event.type,
       currentTime: video.currentTime,
     };
-    if (this.socket.connected) {
-      this.socket.emit("event", eventInfo.event, (response: string) => {
-        console.log(response); // "got it"
-      });
+    
+    if (this.socketHandler.isConnected()) {
+      this.socketHandler.sendVideoEvent(eventInfo);
     }
     console.log(video.currentTime);
     console.log(event.type);
   };
+
   addVideoEventListeners = async () => {
     const video = await waitForElementToLoad("video");
-    const url = "http://localhost:5000";
     if (video) {
       video.addEventListener("play", this.handleVideoEvent);
       video.addEventListener("pause", this.handleVideoEvent);
       video.addEventListener("seeked", this.handleVideoEvent);
+      this.socketHandler = new ClientSocketHandler();
+      this.socketHandler.openConnection();
     }
-    this.socket = io(url);
-    this.socket.on("connect", () => {
-      console.log(this.socket.connected); // true
-    });
-    this.socket.on("disconnect", () => {
-      console.log(this.socket.connected); // true
-    });
   };
 }

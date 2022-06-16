@@ -27,11 +27,14 @@ export class videoHandler {
   addVideoEventListeners = async () => {
     const video = await waitForElementToLoad("video");
     if (video) {
-      video.addEventListener("play", this.handleVideoEvent);
-      video.addEventListener("pause", this.handleVideoEvent);
-      video.addEventListener("seeked", this.handleVideoEvent);
+      this.addEventListeners(video);
       this.socketHandler = new ClientSocketHandler();
       this.socketHandler.openConnection();
     }
   };
+  addEventListeners = (video:Element) => {
+    video.addEventListener("play", this.handleVideoEvent);
+    video.addEventListener("pause", this.handleVideoEvent);
+    video.addEventListener("seeked", this.handleVideoEvent);
+  }
 }

@@ -3,13 +3,13 @@ import { EventInfo } from "./video"
 
 const SocketEventType = {
     MESSAGE: "message",
-    VIDEO_EVENT: "video_event"
+    SEND_VIDEO_EVENT: "send_video_event"
 };
 
 export class ClientSocketHandler {
 
-    serverUrl: string;
-    socket!: Socket;
+    private serverUrl: string;
+    private socket!: Socket;
 
     constructor() {
         this.serverUrl = "http://localhost:5000";
@@ -26,34 +26,28 @@ export class ClientSocketHandler {
     }
 
     sendMessage = (message: string) => {
-        if (!this.socket)
-            throw new Error("Socket is not initialized");
-        if (!this.socket.connected)
-            throw new Error("Socket is not connected");
+        this.checkForErrors();
         this.socket.emit(SocketEventType.MESSAGE, message, (response: string) => {
             console.log("Response: " + response);
         })
     }
 
     sendVideoEvent = (eventInfo: EventInfo) => {
-        if (!this.socket) 
-            throw new Error("Socket is not initialized");
-        if (!this.socket.connected) 
-            throw new Error("Socket is not connected");
-        this.socket.emit(SocketEventType.VIDEO_EVENT, eventInfo, (response: string) => {
+        this.checkForErrors();
+        this.socket.emit(SocketEventType.SEND_VIDEO_EVENT, eventInfo, (response: string) => {
             console.log("Response: " + response);
         })
     }
 
     closeConnection = () => {
-        if (!this.socket)
-            throw new Error("Socket is not initialized");
+        this.checkForErrors();
         this.socket.close();
     }
 
-    isConnected = (): boolean => {
+    private checkForErrors = () => {
         if (!this.socket)
             throw new Error("Socket is not initialized");
-        return this.socket.connected;
+        if (!this.socket.connected)
+            throw new Error("Socket is not connected");
     }
 }

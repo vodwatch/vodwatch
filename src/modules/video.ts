@@ -16,10 +16,8 @@ export class videoHandler {
       event: event.type,
       currentTime: video.currentTime,
     };
-    
-    if (this.socketHandler.isConnected()) {
-      this.socketHandler.sendVideoEvent(eventInfo);
-    }
+
+    this.socketHandler.sendVideoEvent(eventInfo);
     console.log(video.currentTime);
     console.log(event.type);
   };
@@ -32,7 +30,7 @@ export class videoHandler {
       this.socketHandler.openConnection();
     }
   };
-  addEventListeners = (video:Element) => {
+  addEventListeners = (video: Element) => {
     video.addEventListener("play", this.handleVideoEvent);
     video.addEventListener("pause", this.handleVideoEvent);
     video.addEventListener("seeked", this.handleVideoEvent);

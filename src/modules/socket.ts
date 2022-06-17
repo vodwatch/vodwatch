@@ -3,7 +3,8 @@ import { EventInfo } from "./video"
 
 const SocketEventType = {
     MESSAGE: "message",
-    SEND_VIDEO_EVENT: "send_video_event"
+    SEND_VIDEO_EVENT: "send_video_event",
+    RECEIVE_VIDEO_EVENT: "receive_video_event",
 };
 
 export class ClientSocketHandler {
@@ -22,6 +23,9 @@ export class ClientSocketHandler {
         });
         this.socket.on("disconnect", () => {
             console.log("Socket is disconnected");
+        });
+        this.socket.on(SocketEventType.RECEIVE_VIDEO_EVENT, (message) => {
+            console.log("Received video event from the server: ", message);
         });
     }
 

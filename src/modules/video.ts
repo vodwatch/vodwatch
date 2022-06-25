@@ -1,39 +1,38 @@
 import { waitForElementToLoad } from "./utils";
-import axios from "axios";
+import { ClientSocketHandler } from "./socket";
 
-interface EventInfo {
+export interface EventInfo {
   event: string;
   currentTime: number;
 }
 
-const handleVideoEvent = async (event: Event) => {
-  const video = event.target as HTMLVideoElement;
-  let eventInfo: EventInfo = {
-    event: event.type,
-    currentTime: video.currentTime,
-  };
-  let url = "http://localhost:8000/eventInfo/"; // swap this url later for our servers one!!!
-  try {
-    // axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";  <--- if CORS ERROR, but probably it will be servers fault!!!
-    let response = await axios({
-      method: "post",
-      url: url,
-      data: eventInfo,
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(response, "Response from server!!!");
-  } catch (error) {
-    console.error(error, "Error with POST request!!!");
-  }
-  console.log(video.currentTime);
-  console.log(event.type);
-};
+export class videoHandler {
 
-export const addVideoEventListeners = async () => {
-  const video = await waitForElementToLoad("video");
-  if (video) {
-    video.addEventListener("play", handleVideoEvent);
-    video.addEventListener("pause", handleVideoEvent);
-    video.addEventListener("seeked", handleVideoEvent);
+  socketHandler!: ClientSocketHandler
+
+  handleVideoEvent = async (event: Event) => {
+    const video = event.target as HTMLVideoElement;
+    const eventInfo: EventInfo = {
+      event: event.type,
+      currentTime: video.currentTime,
+    };
+
+    this.socketHandler.sendVideoEvent(eventInfo);
+    console.log(video.currentTime);
+    console.log(event.type);
+  };
+
+  addVideoEventListeners = async () => {
+    const video = await waitForElementToLoad("video") as HTMLVideoElement;
+    if (video) {
+      this.addEventListeners(video);
+      this.socketHandler = new ClientSocketHandler(video);
+      this.socketHandler.openConnection();
+    }
+  };
+  addEventListeners = (video: Element) => {
+    video.addEventListener("play", this.handleVideoEvent);
+    video.addEventListener("pause", this.handleVideoEvent);
+    video.addEventListener("seeked", this.handleVideoEvent);
   }
-};
+}

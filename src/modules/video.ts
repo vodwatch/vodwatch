@@ -23,10 +23,10 @@ export class videoHandler {
   };
 
   addVideoEventListeners = async () => {
-    const video = await waitForElementToLoad("video");
+    const video = await waitForElementToLoad("video") as HTMLVideoElement;
     if (video) {
       this.addEventListeners(video);
-      this.socketHandler = new ClientSocketHandler();
+      this.socketHandler = new ClientSocketHandler(video);
       this.socketHandler.openConnection();
     }
   };

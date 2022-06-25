@@ -3,16 +3,19 @@ import { EventInfo } from "./video"
 
 const SocketEventType = {
     MESSAGE: "message",
-    SEND_VIDEO_EVENT: "send_video_event"
+    SEND_VIDEO_EVENT: "send_video_event",
+    RECEIVE_VIDEO_EVENT: "receive_video_event",
 };
 
 export class ClientSocketHandler {
 
     private serverUrl: string;
     private socket!: Socket;
+    private video: HTMLVideoElement;
 
-    constructor() {
+    constructor(video : HTMLVideoElement) {
         this.serverUrl = "http://localhost:5000";
+        this.video = video;
     }
 
     openConnection = () => {
@@ -22,6 +25,23 @@ export class ClientSocketHandler {
         });
         this.socket.on("disconnect", () => {
             console.log("Socket is disconnected");
+        });
+        this.socket.on(SocketEventType.RECEIVE_VIDEO_EVENT, (message: EventInfo) => {
+            console.log("Received video event from the server: ", message);
+            switch(message.event) {
+                case "play":
+                    this.video.play();
+                    console.log("Video is played!");
+                    break;
+                case "pause":
+                    this.video.pause();
+                    console.log("Video is paused!");
+                    break;
+                case "seeked":
+                    //this.video.currentTime = message.currentTime;
+                    console.log("Video is seeked!", message.currentTime);
+                    break;
+            }
         });
     }
 

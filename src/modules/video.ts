@@ -28,11 +28,23 @@ export class videoHandler {
       this.addEventListeners(video);
       this.socketHandler = new ClientSocketHandler(video);
       this.socketHandler.openConnection();
+      this.addPopupButtonHandlers();
     }
   };
+
   addEventListeners = (video: Element) => {
     video.addEventListener("play", this.handleVideoEvent);
     video.addEventListener("pause", this.handleVideoEvent);
     video.addEventListener("seeked", this.handleVideoEvent);
+  };
+
+  addPopupButtonHandlers = () => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.message === "join") {
+        console.log("join");
+      } else if (request.message === "create") {
+        console.log("create");
+      }
+    });
   }
 }

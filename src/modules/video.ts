@@ -41,9 +41,10 @@ export class videoHandler {
   addPopupButtonHandlers = () => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.message === "join") {
-        console.log("join");
+        this.socketHandler.joinRoom(request.roomId);
       } else if (request.message === "create") {
-        console.log("create");
+        console.log(request.roomId);
+        this.socketHandler.createRoom(request.roomId);
       }
     });
   }

@@ -1,12 +1,14 @@
 import { videoHandler } from "./modules/video";
-const videoHandlerInstance = new videoHandler();
-let substring = "https://www.netflix.com/watch";
+const videoHandlerInstance: videoHandler = new videoHandler();
+const substring = "https://www.netflix.com/watch";
 if (document.location.href.includes(substring)) {
-  videoHandlerInstance.addVideoEventListeners();
+    videoHandlerInstance.addVideoEventListeners();
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  videoHandlerInstance.addVideoEventListeners();
+  if (request.text === "on video") {
+    videoHandlerInstance.addVideoEventListeners();
+  }
   sendResponse({});
   return true;
 });

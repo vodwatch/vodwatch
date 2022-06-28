@@ -5,6 +5,8 @@ const SocketEventType = {
     MESSAGE: "message",
     SEND_VIDEO_EVENT: "send_video_event",
     RECEIVE_VIDEO_EVENT: "receive_video_event",
+    CREATE_ROOM: "create_room",
+    JOIN_ROOM: "join_room",
 };
 
 export class ClientSocketHandler {
@@ -56,6 +58,24 @@ export class ClientSocketHandler {
         this.checkForErrors();
         this.socket.emit(SocketEventType.SEND_VIDEO_EVENT, eventInfo, (response: string) => {
             console.log("Response: " + response);
+        })
+    }
+
+    joinRoom = (roomId: string) => {
+        this.checkForErrors();
+        this.socket.emit(SocketEventType.JOIN_ROOM, roomId, (response: string) => {
+            console.log("Response: " + response);
+            if(response === "ROOM_NOT_FOUND")
+                throw new Error("Room not found");
+        })
+    }
+
+    createRoom = (roomId: string) => {
+        this.checkForErrors();
+        this.socket.emit(SocketEventType.CREATE_ROOM, roomId, (response: string) => {
+            console.log("Response: " + response);
+            if(response === "ROOM_ALREADY_EXISTS")
+                throw new Error("Room already exists");
         })
     }
 

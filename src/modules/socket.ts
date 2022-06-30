@@ -15,7 +15,7 @@ export class ClientSocketHandler {
     private socket!: Socket;
     private video: HTMLVideoElement;
 
-    constructor(video : HTMLVideoElement) {
+    constructor(video: HTMLVideoElement) {
         this.serverUrl = "http://localhost:5000";
         this.video = video;
     }
@@ -30,7 +30,7 @@ export class ClientSocketHandler {
         });
         this.socket.on(SocketEventType.RECEIVE_VIDEO_EVENT, (message: EventInfo) => {
             console.log("Received video event from the server: ", message);
-            switch(message.event) {
+            switch (message.event) {
                 case "play":
                     this.video.play();
                     console.log("Video is played!");
@@ -63,19 +63,27 @@ export class ClientSocketHandler {
 
     joinRoom = (roomId: string) => {
         this.checkForErrors();
-        this.socket.emit(SocketEventType.JOIN_ROOM, roomId, (response: string) => {
-            console.log("Response: " + response);
-            if(response === "ROOM_NOT_FOUND")
-                throw new Error("Room not found");
-        })
+        return new Promise((resolve, reject) => {
+            this.socket.emit(SocketEventType.JOIN_ROOM, roomId, (response: string) => {
+                console.log("Response: " + response);
+                if (response === "ROOM_NOT_FOUND") {
+                    reject(response);
+                }
+                resolve(response);
+            })
+        });
     }
 
     createRoom = (roomId: string) => {
         this.checkForErrors();
-        this.socket.emit(SocketEventType.CREATE_ROOM, roomId, (response: string) => {
-            console.log("Response: " + response);
-            if(response === "ROOM_ALREADY_EXISTS")
-                throw new Error("Room already exists");
+        return new Promise((resolve, reject) => {
+            this.socket.emit(SocketEventType.CREATE_ROOM, roomId, (response: string) => {
+                console.log("Response: " + response);
+                if (response === "ROOM_ALREADY_EXISTS") {
+                    reject(response);
+                }
+                resolve(response);
+            })
         })
     }
 

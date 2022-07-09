@@ -23,6 +23,7 @@
     "@types/chrome": "^0.0.181",
     "@types/jest": "^27.5.1",
     "@types/jsdom": "^16.2.14",
+    "@types/uuid": "^8.3.4",
     "copy-webpack-plugin": "^9.1.0",
     "jest": "^28.1.0",
     "socket.io-client": "^4.5.0",
@@ -33,6 +34,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "jsdom": "^19.0.0"
+    "jsdom": "^19.0.0",
+    "uuid": "^8.3.2"
   }
 }

@@ -51,7 +51,13 @@ export class ClientSocketHandler {
             console.log("Video is paused!");
             break;
           case "seeked":
-            //this.video.currentTime = message.currentTime;
+            var time = message.currentTime * 1000;
+            var seekCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
+            const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+            player.seek(${time});`;
+            document.documentElement.setAttribute('onreset', seekCode);
+            document.documentElement.dispatchEvent(new CustomEvent('reset'));
+            document.documentElement.removeAttribute('onreset');
             console.log("Video is seeked!", message.currentTime);
             break;
         }

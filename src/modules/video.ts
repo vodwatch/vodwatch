@@ -8,23 +8,35 @@ export interface EventInfo {
 }
 
 export class videoHandler {
-
-  socketHandler!: ClientSocketHandler
+  socketHandler!: ClientSocketHandler;
 
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
+    switch (event.type) {
+      case "play":
+        if (!this.socketHandler.getPermissions().play) {
+          video.pause();
+          return;
+        }
+        break;
+      case "pause":
+        if (!this.socketHandler.getPermissions().pause) {
+          video.play();
+          return;
+        }
+        break;
+    }
     const eventInfo: EventInfo = {
       event: event.type,
       currentTime: video.currentTime,
     };
-
     this.socketHandler.sendVideoEvent(eventInfo);
     console.log(video.currentTime);
     console.log(event.type);
   };
 
   addVideoEventListeners = async () => {
-    const video = await waitForElementToLoad("video") as HTMLVideoElement;
+    const video = (await waitForElementToLoad("video")) as HTMLVideoElement;
     if (video) {
       this.addEventListeners(video);
       this.socketHandler = new ClientSocketHandler(video);
@@ -39,13 +51,11 @@ export class videoHandler {
     video.addEventListener("seeked", this.handleVideoEvent);
   };
 
-
   addMessageToPopup(text: string) {
-    chrome.runtime.sendMessage(
-      {
-        message: "popup_message",
-        text: text
-      });
+    chrome.runtime.sendMessage({
+      message: "popup_message",
+      text: text,
+    });
   }
 
   addPopupButtonHandlers = () => {
@@ -54,20 +64,20 @@ export class videoHandler {
         if (request.message === "join") {
           try {
             await this.socketHandler.joinRoom(request.roomId);
-            this.addMessageToPopup("You joined the room!")
+            this.addMessageToPopup("You joined the room!");
           } catch (err) {
-            this.addMessageToPopup("Room with specified id is not found!")
+            this.addMessageToPopup("Room with specified id is not found!");
           }
         } else if (request.message === "create") {
           try {
             await this.socketHandler.createRoom(request.roomId);
-            this.addMessageToPopup("The room is created!")
+            this.addMessageToPopup("The room is created!");
           } catch (err) {
-            this.addMessageToPopup("Room with specified id already exists!")
+            this.addMessageToPopup("Room with specified id already exists!");
           }
         }
       };
       a();
-    })
-  }
+    });
+  };
 }

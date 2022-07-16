@@ -78,20 +78,22 @@ export class ClientSocketHandler {
 
   sendVideoEvent = (eventInfo: EventInfo) => {
     this.checkForErrors();
-    const myRoomId = this.findMyRoom();
-    if (myRoomId == null) throw new Error("You are not in a room!");
-    const data = {
-      eventInfo,
-      myRoomId,
-    };
-    console.log(data);
-    this.socket.emit(
-      SocketEventType.SEND_VIDEO_EVENT,
-      data,
-      (response: string) => {
-        console.log("Response: " + response);
-      }
-    );
+    this.findMyRoom().then(
+      (myRoomId) => {
+        if (myRoomId == null) throw new Error("You are not in a room!");
+        var data = {
+          eventInfo,
+          myRoomId,
+        };
+        console.log(data);
+        this.socket.emit(
+          SocketEventType.SEND_VIDEO_EVENT,
+          data,
+          (response: string) => {
+            console.log("Response: " + response);
+          }
+        );
+      });
   };
 
   joinRoom = (roomId: string) => {
@@ -124,9 +126,9 @@ export class ClientSocketHandler {
     });
   };
 
-  findMyRoom = () => {
+  findMyRoom = async () => {
     this.checkForErrors();
-    return new Promise((resolve, reject) => {
+    return await new Promise<string>((resolve, reject) => {
       this.socket.emit(
         SocketEventType.FIND_ROOM_BY_CLIENT,
         (myRoomId: string) => {

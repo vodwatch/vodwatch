@@ -17,16 +17,23 @@ interface Permissions {
   chat: boolean;
   kick: boolean;
 }
+interface MessageEvent {
+  play: boolean;
+  pause: boolean;
+  seek: boolean;
+}
 
 export class ClientSocketHandler {
   private serverUrl: string;
   private socket!: Socket;
   private video: HTMLVideoElement;
   private permissions!: Permissions;
+  private messageEvent!: MessageEvent;
 
   constructor(video: HTMLVideoElement) {
     this.serverUrl = "http://localhost:5000";
     this.video = video;
+    this.messageEvent = { play: false, pause: false, seek: false };
   }
 
   openConnection = () => {
@@ -45,20 +52,23 @@ export class ClientSocketHandler {
           case "play":
             this.video.play();
             console.log("Video is played!");
+            this.messageEvent.play = true;
             break;
           case "pause":
             this.video.pause();
             console.log("Video is paused!");
+            this.messageEvent.pause = true;
             break;
           case "seeked":
             var time = message.currentTime * 1000;
             var seekCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-            const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-            player.seek(${time});`;
+                            const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+                            player.seek(${time});`;
             document.documentElement.setAttribute('onreset', seekCode);
             document.documentElement.dispatchEvent(new CustomEvent('reset'));
             document.documentElement.removeAttribute('onreset');
             console.log("Video is seeked!", message.currentTime);
+            this.messageEvent.seek = true;
             break;
         }
       }
@@ -148,6 +158,8 @@ export class ClientSocketHandler {
   };
 
   getPermissions = (): Permissions => this.permissions;
+
+  getMessageEvent = (): MessageEvent => this.messageEvent;
 
   private checkForErrors = () => {
     if (!this.socket) throw new Error("Socket is not initialized");

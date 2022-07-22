@@ -12,38 +12,14 @@ export class videoHandler {
 
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
-    switch (event.type) {
-      case "play":
-        if (!this.socketHandler.getPermissions().play) {
-          if (!this.socketHandler.getMessageEvent().play) {
-            console.log("Video is not allowed to play!");
-            video.pause();
-          }
-          else {
-            this.socketHandler.getMessageEvent().play = false;
-            console.log("Video is allowed to play!");
-          }
-          return;
-        }
-        break;
-      case "pause":
-        if (!this.socketHandler.getPermissions().pause) {
-          if (!this.socketHandler.getMessageEvent().pause) {
-            console.log("Video is not allowed to pause!");
-            video.play();
-          }
-          else {
-            this.socketHandler.getMessageEvent().pause = false;
-            console.log("Video is allowed to pause!");
-          }
-          return;
-        }
-        break;
-    }
     const eventInfo: EventInfo = {
       event: event.type,
       currentTime: video.currentTime,
     };
+    if(event.type === "seeked") {
+      video.play();
+    }
+
     this.socketHandler.sendVideoEvent(eventInfo);
     console.log(video.currentTime);
     console.log(event.type);

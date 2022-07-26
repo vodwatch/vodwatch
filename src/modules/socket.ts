@@ -30,7 +30,6 @@ export class ClientSocketHandler {
     private permissions!: Permissions;
     private messageEvent!: MessageEvent;
     private seek: boolean = false;
-    private counter: number = 0;
 
     constructor(video: HTMLVideoElement) {
         this.serverUrl = "http://localhost:5000";
@@ -49,15 +48,35 @@ export class ClientSocketHandler {
         this.socket.on(
             SocketEventType.RECEIVE_VIDEO_EVENT,
             (message: EventInfo) => {
-                console.log("Received video event from the server: ", message);
                 this.seek = true;
+                console.log("Received video event from the server: ", message);
                 switch (message.event) {
                     case "play":
-                        this.video.play();
+                        console.log(this.video);
+                        const playCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
+                        const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+                        player.play();`;
+                        document.documentElement.setAttribute(
+                            "onreset",
+                            playCode
+                        );
+                        document.documentElement.dispatchEvent(
+                            new CustomEvent("reset")
+                        );
                         console.log("Video is played!");
                         break;
                     case "pause":
-                        this.video.pause();
+                        console.log(this.video);
+                        const pauseCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
+                        const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+                        player.pause();`;
+                        document.documentElement.setAttribute(
+                            "onreset",
+                            pauseCode
+                        );
+                        document.documentElement.dispatchEvent(
+                            new CustomEvent("reset")
+                        );
                         console.log("Video is paused!");
                         break;
                     case "seeked":
@@ -77,10 +96,13 @@ export class ClientSocketHandler {
                         console.log("Video is seeked!", message.currentTime);
                         this.messageEvent.seek = true;
                         break;
+                    
                 }
                 setTimeout(() => {
                     this.seek = false;
-                }, 500);
+                    console.log("TIMEOUT ");
+                }, 500);   
+                console.log("PO AKCJI", this.video);
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: any) => {
@@ -109,10 +131,9 @@ export class ClientSocketHandler {
             myRoomId,
         };
         console.log(data);
-
+        localStorage.setItem("freeze", "this.seek");
         if (this.seek) {
-            this.counter = 0;
-            console.log("HELLOOOOOOOOOOOOOO", this.counter);
+            console.log("HELLOOOOOOOOOOOOOO");
             return;
         }
 

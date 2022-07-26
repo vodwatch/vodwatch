@@ -16,9 +16,9 @@ export class videoHandler {
       event: event.type,
       currentTime: video.currentTime,
     };
-    if(event.type === "seeked") {
-      video.play();
-    }
+    // if(event.type === "seeked") {
+    //   video.play();
+    // }
 
     this.socketHandler.sendVideoEvent(eventInfo);
     console.log(video.currentTime);

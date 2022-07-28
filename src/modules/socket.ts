@@ -52,6 +52,20 @@ export class ClientSocketHandler {
                 console.log("Received video event from the server: ", message);
                 switch (message.event) {
                     case "play":
+                        if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
+                            const time1 = message.currentTime * 1000;
+                            const seekCode1 = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
+                                const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+                                player.seek(${time1});`;
+                            document.documentElement.setAttribute(
+                                "onreset",
+                                seekCode1
+                            );
+                            document.documentElement.dispatchEvent(
+                                new CustomEvent("reset")
+                            );
+                        }
+
                         console.log(this.video);
                         const playCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
                         const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);

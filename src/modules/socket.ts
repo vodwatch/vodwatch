@@ -29,7 +29,7 @@ export class ClientSocketHandler {
     private video: HTMLVideoElement;
     private permissions!: Permissions;
     private messageEvent!: MessageEvent;
-    private seek: boolean = false;
+    private eventSemaphore: boolean = false;
 
     constructor(video: HTMLVideoElement) {
         this.serverUrl = "http://localhost:5000";
@@ -48,7 +48,7 @@ export class ClientSocketHandler {
         this.socket.on(
             SocketEventType.RECEIVE_VIDEO_EVENT,
             (message: EventInfo) => {
-                this.seek = true;
+                this.eventSemaphore = true;
                 console.log("Received video event from the server: ", message);
                 switch (message.event) {
                     case "play":
@@ -94,7 +94,7 @@ export class ClientSocketHandler {
                         console.log("Video is paused!");
                         break;
                     case "seeked":
-                        console.log("seeeek", this.seek);
+                        console.log("seeeek", this.eventSemaphore);
                         const time = message.currentTime * 1000;
                         const seekCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
                             const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
@@ -113,10 +113,8 @@ export class ClientSocketHandler {
                     
                 }
                 setTimeout(() => {
-                    this.seek = false;
-                    console.log("TIMEOUT ");
+                    this.eventSemaphore = false;
                 }, 500);   
-                console.log("PO AKCJI", this.video);
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: any) => {
@@ -145,9 +143,7 @@ export class ClientSocketHandler {
             myRoomId,
         };
         console.log(data);
-        localStorage.setItem("freeze", "this.seek");
-        if (this.seek) {
-            console.log("HELLOOOOOOOOOOOOOO");
+        if (this.eventSemaphore) {
             return;
         }
 

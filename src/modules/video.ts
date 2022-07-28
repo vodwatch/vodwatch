@@ -9,8 +9,6 @@ export interface EventInfo {
 
 export class videoHandler {
   socketHandler!: ClientSocketHandler;
-  seek: boolean = false;
-  lastEventTime!: number;
 
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
@@ -18,26 +16,10 @@ export class videoHandler {
       event: event.type,
       currentTime: video.currentTime,
     };
-    
-    if(event.type === "seeked") {
-      // const playCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-      // const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-      // player.play();`;
-      // document.documentElement.setAttribute(
-      //     "onreset",
-      //     playCode
-      // );
-      // document.documentElement.dispatchEvent(
-      //     new CustomEvent("reset")
-      // );
-    }
 
-    console.log("EVENTINFO: ", eventInfo);
     this.socketHandler.sendVideoEvent(eventInfo);
-    
     console.log(video.currentTime);
     console.log(event.type);
-    this.lastEventTime = video.currentTime;
   };
 
   addVideoEventListeners = async () => {

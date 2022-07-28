@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { netflixPlay, netflixPause, netflixSeek} from "./services/NetflixService";
 import { EventInfo } from "./video";
 
 const SocketEventType = {
@@ -53,61 +54,20 @@ export class ClientSocketHandler {
                 switch (message.event) {
                     case "play":
                         if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
-                            const time1 = message.currentTime * 1000;
-                            const seekCode1 = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-                                const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-                                player.seek(${time1});`;
-                            document.documentElement.setAttribute(
-                                "onreset",
-                                seekCode1
-                            );
-                            document.documentElement.dispatchEvent(
-                                new CustomEvent("reset")
-                            );
+                            netflixSeek(message.currentTime);
                         }
-
                         console.log(this.video);
-                        const playCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-                        const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-                        player.play();`;
-                        document.documentElement.setAttribute(
-                            "onreset",
-                            playCode
-                        );
-                        document.documentElement.dispatchEvent(
-                            new CustomEvent("reset")
-                        );
-                        console.log("Video is played!");
+                        netflixPlay();
+                        
                         break;
                     case "pause":
                         console.log(this.video);
-                        const pauseCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-                        const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-                        player.pause();`;
-                        document.documentElement.setAttribute(
-                            "onreset",
-                            pauseCode
-                        );
-                        document.documentElement.dispatchEvent(
-                            new CustomEvent("reset")
-                        );
-                        console.log("Video is paused!");
+                        netflixPause();
+                        
                         break;
                     case "seeked":
-                        console.log("seeeek", this.eventSemaphore);
-                        const time = message.currentTime * 1000;
-                        const seekCode = `const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer;
-                            const player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-                            player.seek(${time});`;
-                        document.documentElement.setAttribute(
-                            "onreset",
-                            seekCode
-                        );
-                        document.documentElement.dispatchEvent(
-                            new CustomEvent("reset")
-                        );
-                        document.documentElement.removeAttribute("onreset");
-                        console.log("Video is seeked!", message.currentTime);
+                        netflixSeek(message.currentTime);
+                        
                         this.messageEvent.seek = true;
                         break;
                     

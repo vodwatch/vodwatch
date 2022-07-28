@@ -1,4 +1,4 @@
-import { waitForElementToLoad } from "./utils";
+import { waitForElementToLoad } from "./services/VideoElementService";
 import { ClientSocketHandler } from "./socket";
 import { updateStatusPanel } from "./popup";
 

@@ -30,3 +30,6 @@ When user opens the browser, `background script` checks if user is on the netfli
 
 When using macOs, following error pops out: `(node:6084) ExperimentalWarning: The ESM module loader is experimental.`
 `[webpack-cli] HookWebpackError: Only file and data URLs are supported by the default ESM loader. Received protocol 'node:'`. Type a command: `npm install copy-webpack-plugin@9 -D`
+
+## Video events checklist
+https://docs.google.com/document/d/1Iq3jHTItCCR8t6KVH49_BnAd6aitLf3fcnB3gu6UcvQ/edit?usp=sharing

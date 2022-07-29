@@ -18,24 +18,16 @@ interface Permissions {
     chat: boolean;
     kick: boolean;
 }
-interface MessageEvent {
-    play: boolean;
-    pause: boolean;
-    seek: boolean;
-}
-
 export class ClientSocketHandler {
     private serverUrl: string;
     private socket!: Socket;
     private video: HTMLVideoElement;
     private permissions!: Permissions;
-    private messageEvent!: MessageEvent;
     private eventSemaphore: boolean = false;
 
     constructor(video: HTMLVideoElement) {
         this.serverUrl = "http://localhost:5000";
         this.video = video;
-        this.messageEvent = { play: false, pause: false, seek: false };
     }
 
     openConnection = () => {
@@ -67,8 +59,6 @@ export class ClientSocketHandler {
                         break;
                     case "seeked":
                         netflixSeek(message.currentTime);
-                        
-                        this.messageEvent.seek = true;
                         break;
                     
                 }
@@ -172,8 +162,6 @@ export class ClientSocketHandler {
     };
 
     getPermissions = (): Permissions => this.permissions;
-
-    getMessageEvent = (): MessageEvent => this.messageEvent;
 
     private checkForErrors = () => {
         if (!this.socket) throw new Error("Socket is not initialized");

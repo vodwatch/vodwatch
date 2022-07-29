@@ -11,6 +11,12 @@ const SocketEventType = {
     FIND_ROOM_BY_CLIENT: "find_room_by_client",
     PERMISSIONS: "permissions",
 };
+
+interface MessageFromServer {
+    permissions: Permissions,
+    roomId: string,
+}
+
 interface Permissions {
     pause: boolean;
     play: boolean;
@@ -20,6 +26,7 @@ interface Permissions {
 }
 export class ClientSocketHandler {
     private serverUrl: string;
+    private roomId!: string;
     private socket!: Socket;
     private video: HTMLVideoElement;
     private permissions!: Permissions;
@@ -67,9 +74,14 @@ export class ClientSocketHandler {
                 }, 500);   
             }
         );
-        this.socket.on(SocketEventType.PERMISSIONS, (message: any) => {
+        this.socket.on(SocketEventType.PERMISSIONS, (message: MessageFromServer) => {
             console.log("Received video event from the server: ", message);
-            this.permissions = message.permissions;
+            if (message.permissions && message.roomId) {
+                this.permissions = message?.permissions;
+                this.roomId = message?.roomId;
+            } else {
+                throw new Error(`Haven't received payload from server.`)
+            }
         });
     };
 
@@ -85,12 +97,11 @@ export class ClientSocketHandler {
     };
 
     sendVideoEvent = async (eventInfo: EventInfo) => {
-        this.checkForErrors();
-        const myRoomId = await this.findMyRoom();
-        if (myRoomId == null) throw new Error("You are not in a room!");
-        var data = {
+        this.checkForErrors()
+        if (this.roomId == null) throw new Error("You are not in a room!");
+        const data = {
             eventInfo,
-            myRoomId,
+            roomId: this.roomId,
         };
         console.log(data);
         if (this.eventSemaphore) {
@@ -135,22 +146,6 @@ export class ClientSocketHandler {
                         reject(response);
                     }
                     resolve(response);
-                }
-            );
-        });
-    };
-
-    findMyRoom = async () => {
-        this.checkForErrors();
-        return await new Promise<string>((resolve, reject) => {
-            this.socket.emit(
-                SocketEventType.FIND_ROOM_BY_CLIENT,
-                (myRoomId: string) => {
-                    console.log("Response: " + myRoomId);
-                    if (myRoomId === "ROOM_NOT_FOUND") {
-                        reject(myRoomId);
-                    }
-                    resolve(myRoomId);
                 }
             );
         });

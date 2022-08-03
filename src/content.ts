@@ -1,18 +1,14 @@
-import { videoHandler } from "./modules/video";
-
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import App from './App.vue';
 
-const videoHandlerInstance: videoHandler = new videoHandler();
 const substring = "https://www.netflix.com/watch";
 if (document.location.href.includes(substring)) {
-    videoHandlerInstance.addVideoEventListeners();
     createVueApp();
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.text === "on video") {
-        videoHandlerInstance.addVideoEventListeners();
         createVueApp();
     }
     sendResponse({});
@@ -20,5 +16,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function createVueApp() {
-    createApp(App).mount('body');
+    const body = document.querySelector('body');
+    const mountElement = document.createElement('div');
+    mountElement.className = 'mount-element'
+    mountElement.style.position = 'relative';
+    body!.appendChild(mountElement);
+    const pinia = createPinia();
+    const app = createApp(App);
+    app.use(pinia);
+    app.mount('.mount-element');
 }

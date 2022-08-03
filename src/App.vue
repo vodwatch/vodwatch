@@ -1,25 +1,33 @@
 <template>
     <div id="app">
-      HelloWorld
-      <br/>
-      {{counter}}
-      <button @click="counter += 1"> Click me </button>
+        <RoomConnect @open="openSocketConnection(socket)"></RoomConnect>
     </div>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
-import type { Ref } from 'vue';
+import RoomConnect from './components/RoomConnect.vue';
 
-let counter: Ref<number> = ref(0);
+import { useVideoStore} from './stores/videoStore';
+import { onMounted, ref } from 'vue';
+
+const socket = ref(null);
+
+const store = useVideoStore();
 
 onMounted(()=>{
-  console.log('HELLOOOOO');
+  store.videoHandler.addVideoEventListeners();
 })
+
+function openSocketConnection(newSocketValue: any) {
+  console.log(newSocketValue);
+  socket.value = newSocketValue;
+  store.videoHandler.addSocketToVideoHandler(socket.value);
+}
 </script>
 
 <style>
   #app {
-    background-color: red;
+    position:absolute;
+    background-color: grey;
   }
 </style>

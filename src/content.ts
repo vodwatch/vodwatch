@@ -20,5 +20,5 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function createVueApp() {
-    createApp(App as any).mount('body');
+    createApp(App).mount('body');
 }

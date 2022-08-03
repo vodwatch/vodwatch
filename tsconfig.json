@@ -9,6 +9,7 @@
     "outDir": "dist/js",
     "noEmitOnError": true,
     "typeRoots": ["node_modules/@types"],
+    "moduleResolution": "node",
     "paths": {
       ".@/*": [
         "./*",
@@ -18,7 +19,6 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.vue",
-    "src/shims-vue.d.ts"
   ],
   "exclude": [
     "./node_modules",

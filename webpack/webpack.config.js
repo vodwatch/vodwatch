@@ -18,7 +18,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts?$/,
         loader: "ts-loader",
         exclude: /node_modules/,
         options: {
@@ -32,7 +32,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-            'vue-style-loader',
+            'style-loader',
             'css-loader',
         ]
       }

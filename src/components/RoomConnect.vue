@@ -12,22 +12,43 @@ import { ref, defineEmits } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
 import {ClientSocketHandler} from "../modules/socket";
+import { useSocketStore } from '../stores/socketStore';
+import { videoHandler } from '../modules/video';
+import { Socket } from 'socket.io-client';
 
-const store = useVideoStore();
+const videoStore = useVideoStore();
+const socketStore = useSocketStore();
 const emit = defineEmits(['open']);
 let roomId: Ref<string> = ref('');
-const socket = ref(new ClientSocketHandler(store.videoHandler.video));
 
 
 function joinRoom() {
   console.log('Join Room');
+  socketStore.socket.openConnection();
+  setTimeout(()=>{
+    
+    const video = videoStore.videoHandler.getVideo();
+    socketStore.socket.setVideo(video);
+    videoStore.videoHandler.setSocketHandler(socketStore.socket);
+    socketStore.socket.joinRoom(roomId.value);
+  }, 1000)
 }
 
 function createRoom() {
-  roomId.value = uuid();
-  socket.value.openConnection();
-  socket.value.createRoom(roomId.value);
-  emit('open', socket.value);
+        
+  console.log("create room clicked");
+  console.log(videoStore);
+  console.log(socketStore)
+  socketStore.socket.openConnection();
+  setTimeout(()=>{
+    const video = videoStore.videoHandler.getVideo();
+    socketStore.socket.setVideo(video);
+    videoStore.videoHandler.setSocketHandler(socketStore.socket);
+    roomId.value = uuid();
+    socketStore.socket.createRoom(roomId.value);
+  }, 1000)
+  
+  // emit('open', socket.value);
 }
 </script>
 

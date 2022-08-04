@@ -18,11 +18,6 @@ onMounted(()=>{
   store.videoHandler.addVideoEventListeners();
 })
 
-function openSocketConnection(newSocketValue: any) {
-  console.log(newSocketValue);
-  socket.value = newSocketValue;
-  store.videoHandler.addSocketToVideoHandler(socket.value);
-}
 </script>
 
 <style>

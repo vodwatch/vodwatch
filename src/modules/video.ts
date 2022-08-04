@@ -35,9 +35,13 @@ export class videoHandler {
     this.video.addEventListener("seeked", this.handleVideoEvent);
   };
 
-  addSocketToVideoHandler = (newSocketHandler: any) => {
+  getVideo = () => {
+    return this.video;
+  }
+
+  setSocketHandler = (newSocketHandler: any) => {
     console.log(newSocketHandler);
     this.socketHandler = newSocketHandler;
-    this.socketHandler.openConnection();
+    //this.socketHandler.openConnection();
   }
 }

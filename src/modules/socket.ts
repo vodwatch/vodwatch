@@ -28,13 +28,12 @@ export class ClientSocketHandler {
     private serverUrl: string;
     private roomId!: string;
     private socket!: Socket;
-    private video: HTMLVideoElement;
+    private video!: HTMLVideoElement;
     private permissions!: Permissions;
     private eventSemaphore: boolean = false;
 
-    constructor(video: HTMLVideoElement) {
+    constructor() {
         this.serverUrl = "http://localhost:5000";
-        this.video = video;
     }
 
     openConnection = () => {
@@ -158,8 +157,13 @@ export class ClientSocketHandler {
 
     getPermissions = (): Permissions => this.permissions;
 
+    setVideo = (video : HTMLVideoElement) => {
+        this.video = video;
+    }
+
     private checkForErrors = () => {
         if (!this.socket) throw new Error("Socket is not initialized");
         if (!this.socket.connected) throw new Error("Socket is not connected");
     };
+
 }

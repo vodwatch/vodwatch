@@ -1,4 +1,4 @@
-import { waitForElementToLoad } from "./utils";
+import { waitForElementToLoad } from "./services/VideoElementService";
 import { ClientSocketHandler } from "./socket";
 import { updateStatusPanel } from "./popup";
 
@@ -12,24 +12,11 @@ export class videoHandler {
 
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
-    switch (event.type) {
-      case "play":
-        if (!this.socketHandler.getPermissions().play) {
-          video.pause();
-          return;
-        }
-        break;
-      case "pause":
-        if (!this.socketHandler.getPermissions().pause) {
-          video.play();
-          return;
-        }
-        break;
-    }
     const eventInfo: EventInfo = {
       event: event.type,
       currentTime: video.currentTime,
     };
+
     this.socketHandler.sendVideoEvent(eventInfo);
     console.log(video.currentTime);
     console.log(event.type);

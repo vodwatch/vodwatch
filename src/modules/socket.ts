@@ -13,14 +13,14 @@ const SocketEventType = {
 };
 
 interface MessageFromServer {
-    permissions: Permissions,
+    permissions: Permissionsa,
     roomId: string,
 }
-
-interface Permissions {
+ 
+interface Permissionsa {
     pause: boolean;
     play: boolean;
-    seek: boolean;
+    seeked: boolean;
     chat: boolean;
     kick: boolean;
 }
@@ -29,8 +29,8 @@ export class ClientSocketHandler {
     private roomId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
-    private permissions!: Permissions;
-    private eventSemaphore: boolean = false;
+    private permissions!: Permissionsa;
+    private eventSemaphore: boolean = false; 
 
     constructor() {
         this.serverUrl = "http://localhost:5000";
@@ -102,9 +102,27 @@ export class ClientSocketHandler {
             eventInfo,
             roomId: this.roomId,
         };
-        console.log(data);
+        
+        const event = eventInfo.event as keyof typeof this.permissions;
         if (this.eventSemaphore) {
             return;
+        }
+
+        if(!this.permissions[event]) {
+            this.eventSemaphore = true;
+            switch(eventInfo.event){
+                case "pause":
+                    netflixPlay();
+                    break;
+                case "play":
+                    netflixPause();
+                    break;
+            }
+            setTimeout(() => {
+                this.eventSemaphore = false;
+            }, 50);   
+
+            return;   
         }
 
         this.socket.emit(
@@ -155,7 +173,7 @@ export class ClientSocketHandler {
         this.socket.close();
     };
 
-    getPermissions = (): Permissions => this.permissions;
+    getPermissions = (): Permissionsa => this.permissions;
 
     setVideo = (video : HTMLVideoElement) => {
         this.video = video;

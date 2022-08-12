@@ -21,8 +21,7 @@ const socketStore = useSocketStore();
 const emit = defineEmits(['open']);
 let roomId: Ref<string> = ref('');
 
-
-function joinRoom() {
+const joinRoom = () => {
   console.log('Join Room');
   socketStore.socket.openConnection();
   setTimeout(()=>{
@@ -34,7 +33,7 @@ function joinRoom() {
   }, 1000)
 }
 
-function createRoom() {
+const createRoom = () => {
         
   console.log("create room clicked");
   console.log(videoStore);

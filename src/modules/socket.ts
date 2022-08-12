@@ -13,11 +13,11 @@ const SocketEventType = {
 };
 
 interface MessageFromServer {
-    permissions: Permissionsa,
+    permissions: Permissions,
     roomId: string,
 }
  
-interface Permissionsa {
+interface Permissions {
     pause: boolean;
     play: boolean;
     seeked: boolean;
@@ -29,17 +29,18 @@ export class ClientSocketHandler {
     private roomId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
-    private permissions!: Permissionsa;
+    private permissions!: Permissions;
     private eventSemaphore: boolean = false; 
 
     constructor() {
         this.serverUrl = "http://localhost:5000";
     }
 
-    openConnection = () => {
+    openConnection = (afterConnectionCallback : () => void) => {
         this.socket = io(this.serverUrl);
         this.socket.on("connect", () => {
             console.log("Socket is connected");
+            afterConnectionCallback();
         });
         this.socket.on("disconnect", () => {
             console.log("Socket is disconnected");
@@ -82,6 +83,7 @@ export class ClientSocketHandler {
                 throw new Error(`Haven't received payload from server.`)
             }
         });
+        
     };
 
     sendMessage = (message: string) => {
@@ -173,7 +175,7 @@ export class ClientSocketHandler {
         this.socket.close();
     };
 
-    getPermissions = (): Permissionsa => this.permissions;
+    getPermissions = (): Permissions => this.permissions;
 
     setVideo = (video : HTMLVideoElement) => {
         this.video = video;

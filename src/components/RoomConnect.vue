@@ -11,7 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { ref, defineEmits } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
-import {ClientSocketHandler} from "../modules/socket";
+import { ClientSocketHandler } from "../modules/socket";
 import { useSocketStore } from '../stores/socketStore';
 import { videoHandler } from '../modules/video';
 import { Socket } from 'socket.io-client';
@@ -23,30 +23,26 @@ let roomId: Ref<string> = ref('');
 
 const joinRoom = () => {
   console.log('Join Room');
-  socketStore.socket.openConnection();
-  setTimeout(()=>{
-    
+  socketStore.socket.openConnection(() => {
     const video = videoStore.videoHandler.getVideo();
     socketStore.socket.setVideo(video);
     videoStore.videoHandler.setSocketHandler(socketStore.socket);
     socketStore.socket.joinRoom(roomId.value);
-  }, 1000)
+  });
 }
 
 const createRoom = () => {
-        
   console.log("create room clicked");
   console.log(videoStore);
   console.log(socketStore)
-  socketStore.socket.openConnection();
-  setTimeout(()=>{
+  socketStore.socket.openConnection(() => {
     const video = videoStore.videoHandler.getVideo();
     socketStore.socket.setVideo(video);
     videoStore.videoHandler.setSocketHandler(socketStore.socket);
     roomId.value = uuid();
     socketStore.socket.createRoom(roomId.value);
-  }, 1000)
-  
+  });
+
   // emit('open', socket.value);
 }
 </script>

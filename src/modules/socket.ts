@@ -16,11 +16,11 @@ interface MessageFromServer {
     permissions: Permissions,
     roomId: string,
 }
-
+ 
 interface Permissions {
     pause: boolean;
     play: boolean;
-    seek: boolean;
+    seeked: boolean;
     chat: boolean;
     kick: boolean;
 }
@@ -28,19 +28,19 @@ export class ClientSocketHandler {
     private serverUrl: string;
     private roomId!: string;
     private socket!: Socket;
-    private video: HTMLVideoElement;
+    private video!: HTMLVideoElement;
     private permissions!: Permissions;
-    private eventSemaphore: boolean = false;
+    private eventSemaphore: boolean = false; 
 
-    constructor(video: HTMLVideoElement) {
+    constructor() {
         this.serverUrl = "http://localhost:5000";
-        this.video = video;
     }
 
-    openConnection = () => {
+    openConnection = (afterConnectionCallback : () => void) => {
         this.socket = io(this.serverUrl);
         this.socket.on("connect", () => {
             console.log("Socket is connected");
+            afterConnectionCallback();
         });
         this.socket.on("disconnect", () => {
             console.log("Socket is disconnected");
@@ -83,6 +83,7 @@ export class ClientSocketHandler {
                 throw new Error(`Haven't received payload from server.`)
             }
         });
+        
     };
 
     sendMessage = (message: string) => {
@@ -103,9 +104,27 @@ export class ClientSocketHandler {
             eventInfo,
             roomId: this.roomId,
         };
-        console.log(data);
+        
+        const event = eventInfo.event as keyof typeof this.permissions;
         if (this.eventSemaphore) {
             return;
+        }
+
+        if(!this.permissions[event]) {
+            this.eventSemaphore = true;
+            switch(eventInfo.event){
+                case "pause":
+                    netflixPlay();
+                    break;
+                case "play":
+                    netflixPause();
+                    break;
+            }
+            setTimeout(() => {
+                this.eventSemaphore = false;
+            }, 50);   
+
+            return;   
         }
 
         this.socket.emit(
@@ -158,8 +177,13 @@ export class ClientSocketHandler {
 
     getPermissions = (): Permissions => this.permissions;
 
+    setVideo = (video : HTMLVideoElement) => {
+        this.video = video;
+    }
+
     private checkForErrors = () => {
         if (!this.socket) throw new Error("Socket is not initialized");
         if (!this.socket.connected) throw new Error("Socket is not connected");
     };
+
 }

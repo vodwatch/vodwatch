@@ -1,9 +1,9 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const { VueLoaderPlugin } = require('vue-loader');
 module.exports = {
   mode: "production",
   entry: {
-    popup: path.resolve(__dirname, "..", "src", "modules", "popup.ts"),
     content: path.resolve(__dirname, "..", "src", "content.ts"),
     background: path.resolve(__dirname, "..", "src", "background.ts"),
   },
@@ -12,20 +12,36 @@ module.exports = {
     filename: "[name].js",
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", ".vue"],
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts?$/,
         loader: "ts-loader",
         exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+        },
       },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
+      {
+        test: /\.css$/,
+        use: [
+            'style-loader',
+            'css-loader',
+        ]
+      }
     ],
   },
   plugins: [
     new CopyPlugin({
       patterns: [{ from: ".", to: ".", context: "public" }],
     }),
+
+    new VueLoaderPlugin(),
   ],
 };

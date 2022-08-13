@@ -8,6 +8,19 @@
     "rootDirs": ["src"],
     "outDir": "dist/js",
     "noEmitOnError": true,
-    "typeRoots": ["node_modules/@types"]
-  }
+    "typeRoots": ["node_modules/@types"],
+    "moduleResolution": "node",
+    "paths": {
+      ".@/*": [
+        "./*",
+      ]
+    },
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+  ],
+  "exclude": [
+    "./node_modules",
+  ],
 }

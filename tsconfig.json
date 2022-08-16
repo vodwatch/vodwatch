@@ -10,6 +10,7 @@
     "noEmitOnError": true,
     "typeRoots": ["node_modules/@types"],
     "moduleResolution": "node",
+    "noImplicitAny": false,
     "paths": {
       ".@/*": [
         "./*",

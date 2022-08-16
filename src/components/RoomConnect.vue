@@ -8,17 +8,13 @@
 
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
-import { ClientSocketHandler } from "../modules/socket";
 import { useSocketStore } from '../stores/socketStore';
-import { videoHandler } from '../modules/video';
-import { Socket } from 'socket.io-client';
 
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
-const emit = defineEmits(['open']);
 let roomId: Ref<string> = ref('');
 
 const joinRoom = () => {
@@ -43,18 +39,18 @@ const createRoom = () => {
     socketStore.socket.createRoom(roomId.value);
   });
 
-  // emit('open', socket.value);
 }
 </script>
 
-<style>
+<style scoped>
 .room-connect {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  color: purple;
+  background-color: black;
   height: 50vh;
-  width: 30vh;
-  color: red;
+  border-radius: 5px;
 }
 </style>

@@ -31,6 +31,7 @@ export class ClientSocketHandler {
     private video!: HTMLVideoElement;
     private permissions!: Permissions;
     private eventSemaphore: boolean = false; 
+    supposedCurrentTime: number = 0;
 
     constructor() {
         this.serverUrl = "http://localhost:5000";
@@ -65,7 +66,7 @@ export class ClientSocketHandler {
                         
                         break;
                     case "seeked":
-                        netflixSeek(message.currentTime);
+                        netflixSeek(this.supposedCurrentTime);
                         break;
                     
                 }
@@ -118,6 +119,9 @@ export class ClientSocketHandler {
                     break;
                 case "play":
                     netflixPause();
+                    break;
+                case "seeked":
+                    netflixSeek(this.supposedCurrentTime);
                     break;
             }
             setTimeout(() => {

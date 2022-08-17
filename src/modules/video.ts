@@ -42,6 +42,5 @@ export class videoHandler {
   setSocketHandler = (newSocketHandler: any) => {
     console.log(newSocketHandler);
     this.socketHandler = newSocketHandler;
-    //this.socketHandler.openConnection();
   }
 }

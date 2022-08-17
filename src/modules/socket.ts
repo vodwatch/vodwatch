@@ -25,16 +25,12 @@ interface Permissions {
     kick: boolean;
 }
 export class ClientSocketHandler {
-    private serverUrl: string;
+    private readonly serverUrl: string = "http://localhost:5000";
     private roomId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
     private permissions!: Permissions;
-    private eventSemaphore: boolean = false; 
-
-    constructor() {
-        this.serverUrl = "http://localhost:5000";
-    }
+    private eventSemaphore: boolean = false;
 
     openConnection = (afterConnectionCallback : () => void) => {
         this.socket = io(this.serverUrl);
@@ -84,17 +80,6 @@ export class ClientSocketHandler {
             }
         });
         
-    };
-
-    sendMessage = (message: string) => {
-        this.checkForErrors();
-        this.socket.emit(
-            SocketEventType.MESSAGE,
-            message,
-            (response: string) => {
-                console.log("Response: " + response);
-            }
-        );
     };
 
     sendVideoEvent = async (eventInfo: EventInfo) => {

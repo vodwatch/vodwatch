@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <RoomConnect @open="openSocketConnection(socket)"></RoomConnect>
+        <RoomConnect />
     </div>
 </template>
 
@@ -9,8 +9,6 @@ import RoomConnect from './components/RoomConnect.vue';
 
 import { useVideoStore} from './stores/videoStore';
 import { onMounted, ref } from 'vue';
-
-const socket = ref(null);
 
 const store = useVideoStore();
 

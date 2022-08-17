@@ -25,17 +25,13 @@ interface Permissions {
     kick: boolean;
 }
 export class ClientSocketHandler {
-    private serverUrl: string;
+    private serverUrl: string = "http://localhost:5000";
     private roomId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
     private permissions!: Permissions;
     private eventSemaphore: boolean = false; 
     supposedCurrentTime: number = 0;
-
-    constructor() {
-        this.serverUrl = "http://localhost:5000";
-    }
 
     openConnection = (afterConnectionCallback : () => void) => {
         this.socket = io(this.serverUrl);
@@ -183,6 +179,10 @@ export class ClientSocketHandler {
 
     setVideo = (video : HTMLVideoElement) => {
         this.video = video;
+    }
+
+    isConnected = () => {
+        return this.socket.connected;
     }
 
     private checkForErrors = () => {

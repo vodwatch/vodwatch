@@ -12,27 +12,40 @@
             v-else>
           Show widget.
         </div>
-        <RoomConnect v-if="showWidget"></RoomConnect>
+        <RoomConnect v-if="showWidget && !isConnected" @mockSocket="mockSocket"></RoomConnect>
+        <Chat v-if="showWidget && isConnected"></Chat>
     </div>
 </template>
 
 <script setup lang="ts">
 import RoomConnect from './components/RoomConnect.vue';
+import Chat from './components/Chat.vue';
 
-import { useVideoStore} from './stores/videoStore';
-import {onMounted, Ref, ref} from 'vue';
+import { useVideoStore } from './stores/videoStore';
+// import { useSocketStore } from "./stores/socketStore";
+import { onMounted, Ref, ref } from 'vue';
 
-const store = useVideoStore();
+const videoStore = useVideoStore();
 
-onMounted(()=>{
-  store.videoHandler.addVideoEventListeners();
+onMounted(() => {
+  videoStore.videoHandler.addVideoEventListeners();
 })
 
-let showWidget: Ref<boolean> = ref(true);
+// const socketStore = useSocketStore();  not used for testing, need to add v-if with isConnected method to Chat
+// and RoomConnect component
+
+const showWidget: Ref<boolean> = ref(true);
 
 const hideOrShowWidget = () => {
   showWidget.value = ! showWidget.value;
 }
+
+const isConnected: Ref<boolean> = ref(false);
+
+const mockSocket = (mockSocketValue) => {
+    isConnected.value = mockSocketValue;
+}
+
 
 </script>
 

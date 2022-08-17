@@ -8,7 +8,7 @@
 import RoomConnect from './components/RoomConnect.vue';
 
 import { useVideoStore} from './stores/videoStore';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 const store = useVideoStore();
 

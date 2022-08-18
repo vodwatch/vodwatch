@@ -1,4 +1,4 @@
-import { waitForElementToLoad } from "./utils";
+import { waitForElementToLoad } from "./services/VideoElementService";
 import { ClientSocketHandler } from "./socket";
 
 export interface EventInfo {
@@ -7,8 +7,8 @@ export interface EventInfo {
 }
 
 export class videoHandler {
-
-  socketHandler!: ClientSocketHandler
+  socketHandler!: ClientSocketHandler;
+  video!: HTMLVideoElement;
 
   handleVideoEvent = async (event: Event) => {
     const video = event.target as HTMLVideoElement;
@@ -23,16 +23,24 @@ export class videoHandler {
   };
 
   addVideoEventListeners = async () => {
-    const video = await waitForElementToLoad("video") as HTMLVideoElement;
-    if (video) {
-      this.addEventListeners(video);
-      this.socketHandler = new ClientSocketHandler(video);
-      this.socketHandler.openConnection();
+    this.video = (await waitForElementToLoad("video")) as HTMLVideoElement;
+    if (this.video) {
+      this.addEventListeners();
     }
   };
-  addEventListeners = (video: Element) => {
-    video.addEventListener("play", this.handleVideoEvent);
-    video.addEventListener("pause", this.handleVideoEvent);
-    video.addEventListener("seeked", this.handleVideoEvent);
+
+  addEventListeners = () => {
+    this.video.addEventListener("play", this.handleVideoEvent);
+    this.video.addEventListener("pause", this.handleVideoEvent);
+    this.video.addEventListener("seeked", this.handleVideoEvent);
+  };
+
+  getVideo = () => {
+    return this.video;
+  }
+
+  setSocketHandler = (newSocketHandler: any) => {
+    console.log(newSocketHandler);
+    this.socketHandler = newSocketHandler;
   }
 }

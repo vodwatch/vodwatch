@@ -1,7 +1,7 @@
 import { JSDOM } from "jsdom";
 const dom = new JSDOM();
 global.document = dom.window.document;
-import { waitForElementToLoad } from "../src/modules/utils";
+import { waitForElementToLoad } from "../src/modules/services/VideoElementService";
 test("Check waitForElementToLoad function ", async () => {
   jest.restoreAllMocks();
   jest

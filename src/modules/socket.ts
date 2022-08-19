@@ -46,18 +46,15 @@ export class ClientSocketHandler {
             SocketEventType.RECEIVE_VIDEO_EVENT,
             (message: EventInfo) => {
                 this.eventSemaphore = true;
-                console.log("Received video event from the server: ", message);
                 switch (message.event) {
                     case "play":
                         if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
                             netflixSeek(message.currentTime);
                         }
-                        console.log(this.video);
                         netflixPlay();
                         
                         break;
                     case "pause":
-                        console.log(this.video);
                         netflixPause();
                         
                         break;
@@ -72,7 +69,6 @@ export class ClientSocketHandler {
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: MessageFromServer) => {
-            console.log("Received video event from the server: ", message);
             if (message.permissions && message.roomId) {
                 this.permissions = message?.permissions;
                 this.roomId = message?.roomId;
@@ -89,7 +85,6 @@ export class ClientSocketHandler {
             SocketEventType.MESSAGE,
             message,
             (response: string) => {
-                console.log("Response: " + response);
             }
         );
     };
@@ -131,7 +126,6 @@ export class ClientSocketHandler {
             SocketEventType.SEND_VIDEO_EVENT,
             data,
             (response: string) => {
-                console.log("Response: " + response);
             }
         );
     };
@@ -143,7 +137,6 @@ export class ClientSocketHandler {
                 SocketEventType.JOIN_ROOM,
                 roomId,
                 (response: string) => {
-                    console.log("Response: " + response);
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
@@ -160,7 +153,6 @@ export class ClientSocketHandler {
                 SocketEventType.CREATE_ROOM,
                 roomId,
                 (response: any) => {
-                    console.log("Response: " + response);
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
                     }

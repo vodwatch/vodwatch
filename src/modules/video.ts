@@ -18,8 +18,6 @@ export class videoHandler {
         };
 
         this.socketHandler.sendVideoEvent(eventInfo);
-        console.log(video.currentTime);
-        console.log(event.type);
     };
 
     addVideoEventListeners = async () => {
@@ -46,7 +44,6 @@ export class videoHandler {
     };
 
     setSocketHandler = (newSocketHandler: any) => {
-        console.log(newSocketHandler);
         this.socketHandler = newSocketHandler;
         //this.socketHandler.openConnection();
     };

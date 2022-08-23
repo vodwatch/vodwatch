@@ -14,6 +14,7 @@ import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
 import { useSocketStore } from '../stores/socketStore';
 
+const emit = defineEmits(['mockSocket']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
 let roomId: Ref<string> = ref('');
@@ -26,17 +27,14 @@ const joinRoom = () => {
     try {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
+      emit('mockSocket', true);
     }
     catch {
       createRoomFailed.value = true;
+      emit('mockSocket', false);
     }
   });
-  if (socketStore.socket.isConnected()){
-      createRoomFailed.value = false;
-      return;
-  }
-  createRoomFailed.value = true;
-  emit('mockSocket', true);
+  
 }
 let createRoomFailed: Ref<boolean> = ref(false);
 
@@ -48,10 +46,14 @@ const createRoom = () => {
     roomId.value = uuid();
     try {
       await socketStore.socket.createRoom(roomId.value);
+      createRoomFailed.value = true;
+      emit('mockSocket', true);
       createRoomFailed.value = false;
+      console.log(roomId.value);
     }
     catch {
       createRoomFailed.value = true;
+      emit('mockSocket', false);
     }
   });
   if (socketStore.socket.isConnected()){
@@ -61,8 +63,6 @@ const createRoom = () => {
   createRoomFailed.value = true;
   emit('mockSocket', true);
 }
-
-const emit = defineEmits(['mockSocket']);
 </script>
 
 <style scoped>
@@ -76,6 +76,7 @@ const emit = defineEmits(['mockSocket']);
   height: 50vh;
   border-radius: 5px;
 }
+
 .failed {
   color: red;
 }

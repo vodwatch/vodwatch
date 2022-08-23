@@ -25,13 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
-
-interface Message {
-  from: String,
-  content: String
-}
+import { useSocketStore } from '../stores/socketStore';
+import { Message } from '../modules/interfaces/interfaces';
+const socketStore = useSocketStore();
 
 const messages: Ref<Message[]> = ref([
   {
@@ -55,7 +53,11 @@ const reversedMessages = computed(() => {
   return output;
 })
 
-const messageText: Ref<String> = ref('');
+const messageText: Ref<string> = ref('');
+
+onMounted(() => {
+  socketStore.socket.setChatMessages(messages.value);
+})
 
 const sendMessage = () => {
   if (messageText.value !== '') {
@@ -63,6 +65,7 @@ const sendMessage = () => {
       from: 'me',
       content: messageText.value,
     });
+    socketStore.socket.sendMessage(messageText.value);
     messageText.value = '';
   }
 }

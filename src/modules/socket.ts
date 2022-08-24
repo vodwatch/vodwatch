@@ -25,7 +25,7 @@ interface Permissions {
     kick: boolean;
 }
 export class ClientSocketHandler {
-    private serverUrl: string = "http://localhost:5000";
+    private readonly serverUrl: string = "http://localhost:5000";
     private roomId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
@@ -88,7 +88,7 @@ export class ClientSocketHandler {
             }
         );
     };
-
+    
     sendVideoEvent = async (eventInfo: EventInfo) => {
         this.checkForErrors()
         if (this.roomId == null) throw new Error("You are not in a room!");

@@ -20,7 +20,6 @@
 <script setup lang="ts">
 import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
-
 import { useVideoStore } from './stores/videoStore';
 // import { useSocketStore } from "./stores/socketStore";
 import { onMounted, Ref, ref } from 'vue';

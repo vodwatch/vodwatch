@@ -54,7 +54,6 @@ const createRoom = () => {
       createRoomFailed.value = true;
     }
   });
-
   if (socketStore.socket.isConnected()){
     createRoomFailed.value = false;
     return;

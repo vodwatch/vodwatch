@@ -3,6 +3,7 @@
     <input type="text" v-model="roomId" placeholder="Enter room id ...">
     <button @click="joinRoom"> Join Room </button>
     <button @click="createRoom"> Create Room </button>
+    <span v-if="createRoomFailed" class="failed"> Failed to create a room. Try Again!</span>
   </div>
 </template>
 
@@ -18,38 +19,64 @@ const socketStore = useSocketStore();
 let roomId: Ref<string> = ref('');
 
 const joinRoom = () => {
-  console.log('Join Room');
-  socketStore.socket.openConnection(() => {
+  socketStore.socket.openConnection(async () => {
     const video = videoStore.videoHandler.getVideo();
     socketStore.socket.setVideo(video);
     videoStore.videoHandler.setSocketHandler(socketStore.socket);
-    socketStore.socket.joinRoom(roomId.value);
+    try {
+      await socketStore.socket.joinRoom(roomId.value);
+      createRoomFailed.value = false;
+    }
+    catch {
+      createRoomFailed.value = true;
+    }
   });
+  if (socketStore.socket.isConnected()){
+      createRoomFailed.value = false;
+      return;
+  }
+  createRoomFailed.value = true;
+  emit('mockSocket', true);
 }
+let createRoomFailed: Ref<boolean> = ref(false);
 
 const createRoom = () => {
-  console.log("create room clicked");
-  console.log(videoStore);
-  console.log(socketStore)
-  socketStore.socket.openConnection(() => {
+  socketStore.socket.openConnection(async () => {
     const video = videoStore.videoHandler.getVideo();
     socketStore.socket.setVideo(video);
     videoStore.videoHandler.setSocketHandler(socketStore.socket);
     roomId.value = uuid();
-    socketStore.socket.createRoom(roomId.value);
+    try {
+      await socketStore.socket.createRoom(roomId.value);
+      createRoomFailed.value = false;
+    }
+    catch {
+      createRoomFailed.value = true;
+    }
   });
-
+  if (socketStore.socket.isConnected()){
+    createRoomFailed.value = false;
+    return;
+  }
+  createRoomFailed.value = true;
+  emit('mockSocket', true);
 }
+
+const emit = defineEmits(['mockSocket']);
 </script>
 
-<style>
+<style scoped>
 .room-connect {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  color: purple;
+  background-color: black;
   height: 50vh;
-  width: 30vh;
+  border-radius: 5px;
+}
+.failed {
   color: red;
 }
 </style>

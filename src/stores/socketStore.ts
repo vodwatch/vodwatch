@@ -5,7 +5,7 @@ import { ClientSocketHandler } from "../modules/socket";
 export const useSocketStore = defineStore("socket", {
     state: () => {
         return {
-            socket: new ClientSocketHandler() as ClientSocketHandler,
+            socket: new ClientSocketHandler() as ClientSocketHandler
         };
     },
 });

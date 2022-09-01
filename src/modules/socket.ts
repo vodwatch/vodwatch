@@ -30,7 +30,8 @@ export class ClientSocketHandler {
     private socket!: Socket;
     private video!: HTMLVideoElement;
     private permissions!: Permissions;
-    private eventSemaphore: boolean = false;
+    private eventSemaphore: boolean = false; 
+    supposedCurrentTime: number = 0;
 
     openConnection = (afterConnectionCallback : () => void) => {
         this.socket = io(this.serverUrl);
@@ -45,23 +46,20 @@ export class ClientSocketHandler {
             SocketEventType.RECEIVE_VIDEO_EVENT,
             (message: EventInfo) => {
                 this.eventSemaphore = true;
-                console.log("Received video event from the server: ", message);
                 switch (message.event) {
                     case "play":
                         if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
                             netflixSeek(message.currentTime);
                         }
-                        console.log(this.video);
                         netflixPlay();
                         
                         break;
                     case "pause":
-                        console.log(this.video);
                         netflixPause();
                         
                         break;
                     case "seeked":
-                        netflixSeek(message.currentTime);
+                        netflixSeek(this.supposedCurrentTime);
                         break;
                     
                 }
@@ -71,7 +69,6 @@ export class ClientSocketHandler {
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: MessageFromServer) => {
-            console.log("Received video event from the server: ", message);
             if (message.permissions && message.roomId) {
                 this.permissions = message?.permissions;
                 this.roomId = message?.roomId;
@@ -82,6 +79,16 @@ export class ClientSocketHandler {
         
     };
 
+    sendMessage = (message: string) => {
+        this.checkForErrors();
+        this.socket.emit(
+            SocketEventType.MESSAGE,
+            message,
+            (response: string) => {
+            }
+        );
+    };
+    
     sendVideoEvent = async (eventInfo: EventInfo) => {
         this.checkForErrors()
         if (this.roomId == null) throw new Error("You are not in a room!");
@@ -104,6 +111,9 @@ export class ClientSocketHandler {
                 case "play":
                     netflixPause();
                     break;
+                case "seeked":
+                    netflixSeek(this.supposedCurrentTime);
+                    break;
             }
             setTimeout(() => {
                 this.eventSemaphore = false;
@@ -116,7 +126,6 @@ export class ClientSocketHandler {
             SocketEventType.SEND_VIDEO_EVENT,
             data,
             (response: string) => {
-                console.log("Response: " + response);
             }
         );
     };
@@ -128,7 +137,6 @@ export class ClientSocketHandler {
                 SocketEventType.JOIN_ROOM,
                 roomId,
                 (response: string) => {
-                    console.log("Response: " + response);
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
@@ -145,7 +153,6 @@ export class ClientSocketHandler {
                 SocketEventType.CREATE_ROOM,
                 roomId,
                 (response: any) => {
-                    console.log("Response: " + response);
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
                     }
@@ -164,6 +171,10 @@ export class ClientSocketHandler {
 
     setVideo = (video : HTMLVideoElement) => {
         this.video = video;
+    }
+
+    isConnected = () => {
+        return this.socket.connected;
     }
 
     private checkForErrors = () => {

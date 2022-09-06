@@ -20,7 +20,6 @@
         type="text"
         v-model="messageText"
         @keyup.enter="sendMessage"
-        required
     >
     <button @click="sendMessage">Send</button>
   </div>
@@ -47,12 +46,15 @@ const reversedMessages = computed(() => {
 const messageText: Ref<string> = ref('');
 
 const sendMessage = () => {
-    messageStore.messages.push({
+
+  if (messageText.value !== '') {
+    messages.value.push({
       from: 'me',
       content: messageText.value,
     });
     socketStore.socket.sendMessage(messageText.value);
     messageText.value = '';
+  }
 }
 </script>
 

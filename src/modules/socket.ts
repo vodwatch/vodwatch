@@ -70,6 +70,7 @@ export class ClientSocketHandler {
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: MessageFromServer) => {
+            console.log(message);
             if (message.permissions && message.roomId) {
                 this.permissions = message?.permissions;
                 this.roomId = message?.roomId;

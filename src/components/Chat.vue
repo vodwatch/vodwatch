@@ -48,25 +48,6 @@ import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
 
-interface Message {
-  from: String,
-  content: String
-}
-
-const messages: Ref<Message[]> = ref([
-  {
-    from: 'xyz',
-    content: 'Hey',
-  },
-  {
-    from: 'zyx',
-    content: 'Hey back',
-  },
-  {
-    from: 'me',
-    content: "It's me",
-  },
-]);
 const messages: Ref<Message[]> = ref(messageStore.messages);
 const reversedMessages = computed(() => {
   let output: Message[] = [];

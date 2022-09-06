@@ -36,10 +36,13 @@ const joinRoom = () => {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
       emit('mockSocket', true);
+      console.log("joined the room!");
+      
     }
     catch {
       createRoomFailed.value = true;
       emit('mockSocket', false);
+      console.log("join room failed!");
     }
   });
 };
@@ -57,6 +60,7 @@ const createRoom = () => {
     catch {
       createRoomFailed.value = true;
       emit('mockSocket', false);
+      console.log("create room failed!");
     }
   });
   if (socketStore.socket.isConnected()){

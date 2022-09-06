@@ -41,11 +41,7 @@ const hideOrShowWidget = () => {
   showWidget.value = ! showWidget.value;
 }
 
-// const isConnected: Ref<boolean> = ref(false);
-
-// const mockSocket = (mockSocketValue) => {
-//     isConnected.value = mockSocketValue;
-// }
+const isConnected: Ref<boolean> = ref(false);
 
 const mockSocket = (socketIsConnected : boolean) => {
     isConnected.value = socketIsConnected;

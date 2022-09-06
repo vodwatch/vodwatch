@@ -19,34 +19,22 @@
     <input
         type="text"
         v-model="messageText"
-        @keyup.enter="sendMessage">
+        @keyup.enter="sendMessage"
+    >
     <button @click="sendMessage">Send</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
+import { useSocketStore } from '../stores/socketStore';
+import { Message } from '../modules/interfaces/interfaces';
+import { useMessageStore } from '../stores/messageStore';
+const socketStore = useSocketStore();
+const messageStore = useMessageStore();
 
-interface Message {
-  from: String,
-  content: String
-}
-
-const messages: Ref<Message[]> = ref([
-  {
-    from: 'xyz',
-    content: 'Hey',
-  },
-  {
-    from: 'zyx',
-    content: 'Hey back',
-  },
-  {
-    from: 'me',
-    content: "It's me",
-  },
-]);
+const messages: Ref<Message[]> = ref(messageStore.messages);
 const reversedMessages = computed(() => {
   let output: Message[] = [];
   for (let i = messages.value.length - 1; i > -1; i--){
@@ -55,14 +43,16 @@ const reversedMessages = computed(() => {
   return output;
 })
 
-const messageText: Ref<String> = ref('');
+const messageText: Ref<string> = ref('');
 
 const sendMessage = () => {
+
   if (messageText.value !== '') {
     messages.value.push({
       from: 'me',
       content: messageText.value,
     });
+    socketStore.socket.sendMessage(messageText.value);
     messageText.value = '';
   }
 }

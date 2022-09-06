@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
 import { Message } from '../modules/interfaces/interfaces';
@@ -48,26 +48,8 @@ import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
 
-interface Message {
-  from: String,
-  content: String
-}
-
-const messages: Ref<Message[]> = ref([
-  {
-    from: 'xyz',
-    content: 'Hey',
-  },
-  {
-    from: 'zyx',
-    content: 'Hey back',
-  },
-  {
-    from: 'me',
-    content: "It's me",
-  },
-]);
 const messages: Ref<Message[]> = ref(messageStore.messages);
+
 const reversedMessages = computed(() => {
   let output: Message[] = [];
   for (let i = messages.value.length - 1; i > -1; i--){
@@ -85,7 +67,12 @@ const sendMessage = () => {
       from: 'me',
       content: messageText.value,
     });
-    socketStore.socket.sendMessage(messageText.value);
+    try {
+      socketStore.socket.sendMessage(messageText.value);
+    }
+    catch (e) {
+      console.error(e);
+    }
     messageText.value = '';
   }
 }

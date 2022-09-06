@@ -47,6 +47,9 @@ const hideOrShowWidget = () => {
 //     isConnected.value = mockSocketValue;
 // }
 
+const mockSocket = (socketIsConnected : boolean) => {
+    isConnected.value = socketIsConnected;
+}
 
 
 </script>

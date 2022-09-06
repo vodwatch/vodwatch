@@ -1,12 +1,14 @@
 import { io, Socket } from "socket.io-client";
 import { netflixPlay, netflixPause, netflixSeek} from "./services/NetflixService";
 import { youTubePlay, youTubePause, youTubeSeek} from "./services/YouTubeService";
+import { Message } from "./interfaces/interfaces";
 import { EventInfo } from "./video";
 import {streamingPlatform} from '../streamingPlatform';
 import { setActivePinia } from "pinia";
 
 const SocketEventType = {
-    MESSAGE: "message",
+    SEND_MESSAGE: "send_message",
+    RECEIVE_MESSAGE: "receive_message",
     SEND_VIDEO_EVENT: "send_video_event",
     RECEIVE_VIDEO_EVENT: "receive_video_event",
     CREATE_ROOM: "create_room",
@@ -19,7 +21,7 @@ interface MessageFromServer {
     permissions: Permissions,
     roomId: string,
 }
- 
+
 interface Permissions {
     pause: boolean;
     play: boolean;
@@ -35,9 +37,10 @@ export class ClientSocketHandler {
     private permissions!: Permissions;
     private eventSemaphore: boolean = false; 
     public streamingPlatform?: string;
+    private chatMessages!: Message[];
     supposedCurrentTime: number = 0;
 
-    openConnection = (afterConnectionCallback : () => void) => {
+    openConnection = (afterConnectionCallback: () => void) => {
         this.socket = io(this.serverUrl);
         this.socket.on("connect", () => {
             console.log("Socket is connected");
@@ -153,17 +156,34 @@ export class ClientSocketHandler {
                 throw new Error(`Haven't received payload from server.`)
             }
         });
-        
+        this.socket.on(SocketEventType.RECEIVE_MESSAGE, (message: Message) => {
+            console.log("Incoming message:", message);
+            if(!this.chatMessages)
+                throw new Error("Chat messages reference is not set!")
+            this.chatMessages.push(message);
+        });
     };
 
     sendMessage = (message: string) => {
         this.checkForErrors();
-        this.socket.emit(
-            SocketEventType.MESSAGE,
-            message,
-            (response: string) => {
-            }
-        );
+        if (this.roomId == null)
+            throw new Error("You are not in a room!");
+        return new Promise((resolve, reject) => {
+            this.socket.emit(
+                SocketEventType.SEND_MESSAGE,
+                {
+                    message: message,
+                    roomId: this.roomId,
+                },
+                (response: string) => {
+                    console.log("Message sent successfuly!");
+                    if (response === "ROOM_NOT_FOUND") {
+                        reject(response);
+                    }
+                    resolve(response);
+                }
+            );
+        });
     };
     
     sendVideoEvent = async (eventInfo: EventInfo) => {
@@ -173,15 +193,15 @@ export class ClientSocketHandler {
             eventInfo,
             roomId: this.roomId,
         };
-        
+
         const event = eventInfo.event as keyof typeof this.permissions;
         if (this.eventSemaphore) {
             return;
         }
 
-        if(!this.permissions[event]) {
+        if (!this.permissions[event]) {
             this.eventSemaphore = true;
-            switch(eventInfo.event){
+            switch (eventInfo.event) {
                 case "pause":
                     switch(this.streamingPlatform) {
                         case streamingPlatform.netflix:
@@ -251,9 +271,9 @@ export class ClientSocketHandler {
             }
             setTimeout(() => {
                 this.eventSemaphore = false;
-            }, 1000);   
+            }, 1000); 
 
-            return;   
+            return;
         }
 
         this.socket.emit(
@@ -303,12 +323,16 @@ export class ClientSocketHandler {
 
     getPermissions = (): Permissions => this.permissions;
 
-    setVideo = (video : HTMLVideoElement) => {
+    setVideo = (video: HTMLVideoElement) => {
         this.video = video;
     }
 
     isConnected = () => {
         return this.socket.connected;
+    }
+
+    setChatMessages = (chatMessages : Message[]) => {
+        this.chatMessages = chatMessages;
     }
 
     private checkForErrors = () => {

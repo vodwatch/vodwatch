@@ -35,8 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
+import { useSocketStore } from '../stores/socketStore';
+import { Message } from '../modules/interfaces/interfaces';
+import { useMessageStore } from '../stores/messageStore';
+const socketStore = useSocketStore();
+const messageStore = useMessageStore();
 
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
@@ -62,6 +67,7 @@ const messages: Ref<Message[]> = ref([
     content: "It's me",
   },
 ]);
+const messages: Ref<Message[]> = ref(messageStore.messages);
 const reversedMessages = computed(() => {
   let output: Message[] = [];
   for (let i = messages.value.length - 1; i > -1; i--){
@@ -70,14 +76,16 @@ const reversedMessages = computed(() => {
   return output;
 })
 
-const messageText: Ref<String> = ref('');
+const messageText: Ref<string> = ref('');
 
 const sendMessage = () => {
+
   if (messageText.value !== '') {
     messages.value.push({
       from: 'me',
       content: messageText.value,
     });
+    socketStore.socket.sendMessage(messageText.value);
     messageText.value = '';
   }
 }

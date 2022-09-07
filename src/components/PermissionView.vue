@@ -4,8 +4,10 @@
             {{ userPermission.username }}
           <input type="checkbox" id="vod-control" v-model="userPermission.permissions.vodControl">
           <label for="vod-control">VOD control:</label>
+
           <input type="checkbox" id="chat" v-model="userPermission.permissions.chat">
           <label for="chat">Chat:</label>
+
           <input type="checkbox" id="kick" v-model="userPermission.permissions.kick">
           <label for="kick">Kick:</label>
         </div>

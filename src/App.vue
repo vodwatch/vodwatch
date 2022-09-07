@@ -1,25 +1,37 @@
 <template>
     <div id="app">
-        <div
+        <a
+            href="#"
             @click="hideOrShowWidget()"
             class="show-widget"
             v-if="showWidget">
           Hide widget.
-        </div>
-        <div
+        </a>
+        <a
+            href="#"
             @click="hideOrShowWidget()"
             class="show-widget"
             v-else>
           Show widget.
-        </div>
+        </a>
         <RoomConnect v-if="showWidget && !isConnected" @mockSocket="mockSocket"></RoomConnect>
-        <Chat v-if="showWidget && isConnected"></Chat>
+        <Chat v-if="showWidget && isConnected && !permissionViewToggle"></Chat>
+        <a href="#"
+          v-if="showWidget && isConnected && !permissionViewToggle" @click="changePermissionView">
+          Manage Permissions
+        </a>
+        <PermissionView v-if="showWidget && permissionViewToggle"/>
+        <a href="#"
+           v-if="showWidget && isConnected && permissionViewToggle" @click="changePermissionView">
+          Go back to chat
+        </a>
     </div>
 </template>
 
 <script setup lang="ts">
 import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
+import PermissionView from './components/PermissionView.vue';
 import { useVideoStore } from './stores/videoStore';
 // import { useSocketStore } from "./stores/socketStore";
 import { onMounted, Ref, ref } from 'vue';
@@ -46,6 +58,10 @@ const mockSocket = (mockSocketValue) => {
 }
 
 
+const permissionViewToggle: Ref<boolean> = ref(false);
+const changePermissionView = () => {
+  permissionViewToggle.value = !permissionViewToggle.value;
+}
 </script>
 
 <style>
@@ -58,7 +74,13 @@ const mockSocket = (mockSocketValue) => {
   .show-widget {
     text-align: right;
     width: 15vw;
-    color: mediumpurple;
+  }
+  a:link, a:visited {
+    color: white;
     cursor: pointer;
+  }
+
+  a:link:active, a:visited:active {
+    color: mediumpurple;
   }
 </style>

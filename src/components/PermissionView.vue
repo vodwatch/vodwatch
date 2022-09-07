@@ -1,6 +1,6 @@
 <template>
     <div class="permissions-container">
-        <div v-for="(userPermission, index) of permissions" :key="index" style="display:flex; gap:1em">
+        <div v-for="(userPermission, index) of permissions" :key="index" class="user-permissions">
             {{ userPermission.username }}
           <input type="checkbox" id="vod-control" v-model="userPermission.permissions.vodControl">
           <label for="vod-control">VOD control:</label>
@@ -62,5 +62,9 @@ onMounted(() => {
     height: 50vh;
     border-radius: 5px;
     width: 15vw;
+  }
+  .user-permissions {
+    display:flex;
+    gap:1em
   }
 </style>

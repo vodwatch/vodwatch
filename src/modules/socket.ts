@@ -1,7 +1,8 @@
 import { io, Socket } from "socket.io-client";
-import { Message } from "./interfaces/interfaces";
+import { Message, UsersPermissions } from './interfaces/interfaces';
 import { netflixPlay, netflixPause, netflixSeek } from "./services/NetflixService";
 import { EventInfo } from "./video";
+import { Permissions } from './interfaces/interfaces';
 
 const SocketEventType = {
     SEND_MESSAGE: "send_message",
@@ -12,6 +13,7 @@ const SocketEventType = {
     JOIN_ROOM: "join_room",
     FIND_ROOM_BY_CLIENT: "find_room_by_client",
     PERMISSIONS: "permissions",
+    FIND_ALL_USERS_IN_ROOM: "find_all_users_in_room",
 };
 
 interface MessageFromServer {
@@ -19,13 +21,6 @@ interface MessageFromServer {
     roomId: string,
 }
 
-interface Permissions {
-    pause: boolean;
-    play: boolean;
-    seeked: boolean;
-    chat: boolean;
-    kick: boolean;
-}
 export class ClientSocketHandler {
     private readonly serverUrl: string = "http://localhost:5000";
     private roomId!: string;
@@ -116,12 +111,11 @@ export class ClientSocketHandler {
             roomId: this.roomId,
         };
 
-        const event = eventInfo.event as keyof typeof this.permissions;
         if (this.eventSemaphore) {
             return;
         }
+        if(!this.permissions['vodControl']) {
 
-        if (!this.permissions[event]) {
             this.eventSemaphore = true;
             switch (eventInfo.event) {
                 case "pause":
@@ -180,6 +174,21 @@ export class ClientSocketHandler {
             );
         });
     };
+
+    fetchAllUsersInRoom = () : Promise<UsersPermissions[]> => {
+        this.checkForErrors();
+        return new Promise((resolve, reject) => {
+            this.socket.emit(
+                SocketEventType.FIND_ALL_USERS_IN_ROOM,
+                (response: any) => {
+                    if (response === "ROOM_NOT_FOUND") {
+                        reject(response);
+                    }
+                    resolve(response);
+                }
+            );
+        });
+    }
 
     closeConnection = () => {
         this.checkForErrors();

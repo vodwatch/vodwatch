@@ -8,7 +8,7 @@ export interface UsersPermissions {
     permissions: Permissions,
 }
 
-interface Permissions {
+export interface Permissions {
     vodControl: boolean,
     chat: boolean;
     kick: boolean;

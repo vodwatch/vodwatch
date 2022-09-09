@@ -22,40 +22,17 @@ import { ref, onMounted, watch } from 'vue';
 import type { Ref } from 'vue';
 
 import type { UsersPermissions } from "../modules/interfaces/interfaces";
+import { useSocketStore } from '../stores/socketStore';
 
-const TEST_USER_PERMISSIONS: UsersPermissions[] = [
-  {
-    username: 'Bob',
-    permissions: {
-      vodControl: true,
-      chat: true,
-      kick: false,
-    }
-  },
-  {
-    username: 'Alice',
-    permissions: {
-      vodControl: false,
-      chat: false,
-      kick: false,
-    }
-  },
-  {
-    username: 'Frank',
-    permissions: {
-      vodControl: true,
-      chat: true,
-      kick: true,
-    }
-  },
-]
+const socketStore = useSocketStore();
+
 const permissions: Ref<UsersPermissions[]> = ref([]);
 watch(permissions, (permissionsChange) => {
   //send to backend
 }, { deep: true });
-onMounted(() => {
-  permissions.value = TEST_USER_PERMISSIONS;
-  //set permissions from store
+onMounted(async () => {
+  // fetch all users in a room and their permissions
+  permissions.value = await socketStore.socket.fetchAllUsersInRoom();
 })
 </script>
 

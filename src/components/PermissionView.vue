@@ -28,7 +28,8 @@ const socketStore = useSocketStore();
 
 const permissions: Ref<UsersPermissions[]> = ref([]);
 watch(permissions, (permissionsChange) => {
-  //send to backend
+  //send to backend\
+  socketStore.socket.setUsersPermissions(permissions.value);
 }, { deep: true });
 onMounted(async () => {
   // fetch all users in a room and their permissions

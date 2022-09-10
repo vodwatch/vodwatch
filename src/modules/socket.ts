@@ -14,6 +14,7 @@ const SocketEventType = {
     FIND_ROOM_BY_CLIENT: "find_room_by_client",
     PERMISSIONS: "permissions",
     FIND_ALL_USERS_IN_ROOM: "find_all_users_in_room",
+    SET_USERS_PERMISSIONS: "set_users_permissions",
 };
 
 interface MessageFromServer {
@@ -180,6 +181,24 @@ export class ClientSocketHandler {
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.FIND_ALL_USERS_IN_ROOM,
+                this.roomId,
+                (response: any) => {
+                    if (response === "ROOM_NOT_FOUND") {
+                        reject(response);
+                    }
+                    resolve(response);
+                }
+            );
+        });
+    }
+
+    setUsersPermissions = (usersPermissions : UsersPermissions[]) => {
+        this.checkForErrors();
+        return new Promise((resolve, reject) => {
+            this.socket.emit(
+                SocketEventType.SET_USERS_PERMISSIONS,
+                this.roomId,
+                usersPermissions,
                 (response: any) => {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);

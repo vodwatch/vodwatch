@@ -229,6 +229,8 @@ export class ClientSocketHandler {
             this.socket.emit(
                 SocketEventType.JOIN_ROOM,
                 roomId,
+                "netflix",
+                this.netflixVideoId,
                 (response: string) => {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
@@ -245,6 +247,9 @@ export class ClientSocketHandler {
         return new Promise<string>((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.CREATE_ROOM,
+                roomId,
+                "netflix",
+                this.netflixVideoId,
                 (response: string) => {
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
@@ -309,6 +314,10 @@ export class ClientSocketHandler {
 
     isConnected = () : boolean => {
         return this.socket && this.socket.connected;
+    }
+    
+    setNetflixVideoId = (netflixVideoId: string | undefined) => {   
+        this.netflixVideoId = netflixVideoId;
     }
 
     setChatMessages = (chatMessages: Message[]) => {

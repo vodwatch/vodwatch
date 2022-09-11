@@ -40,6 +40,7 @@ function createVueApp() {
     const app = createApp(App);
     app.use(pinia);
     app.provide('streamingPlatform', streamingPlatform);
+    app.provide('netflixVideoId', netflixVideoId);
     app.mount('.mount-element');
 }
 

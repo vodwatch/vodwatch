@@ -3,8 +3,7 @@ import { netflixPlay, netflixPause, netflixSeek} from "./services/NetflixService
 import { youTubePlay, youTubePause, youTubeSeek} from "./services/YouTubeService";
 import { Message } from "./interfaces/interfaces";
 import { EventInfo } from "./video";
-import {streamingPlatform} from '../streamingPlatform';
-import { setActivePinia } from "pinia";
+import { STREAMING_PLATFORM } from '../streamingPlatform';
 
 const SocketEventType = {
     SEND_MESSAGE: "send_message",
@@ -57,88 +56,88 @@ export class ClientSocketHandler {
                     case "play":
                         if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
                             switch(this.streamingPlatform) {
-                                case streamingPlatform.netflix:
+                                case STREAMING_PLATFORM.netflix:
                                     netflixSeek(message.currentTime);
                                     break;
-                                case streamingPlatform.hboMax:
+                                case STREAMING_PLATFORM.hboMax:
                                     console.log("HBO Max video is seeked!");
                                     break;
-                                case streamingPlatform.youTube:
+                                case STREAMING_PLATFORM.youTube:
                                     youTubeSeek(message.currentTime);
                                     break;
-                                case streamingPlatform.disneyPlus:
+                                case STREAMING_PLATFORM.disneyPlus:
                                     console.log("Disney+ video is seeked!");
                                     break;
-                                case streamingPlatform.amazonPrimeVideo:
+                                case STREAMING_PLATFORM.amazonPrimeVideo:
                                     console.log("Amazon Prime Video video is seeked!");
                                     break;
                                 default:
-                                    console.warn("Streaming platform is undefined.");
+                                    this.video.currentTime = message.currentTime;
                                     break;
                             }
                         }
                         switch(this.streamingPlatform) {
-                            case streamingPlatform.netflix:
+                            case STREAMING_PLATFORM.netflix:
                                 netflixPlay();
                                 break;
-                            case streamingPlatform.hboMax:
+                            case STREAMING_PLATFORM.hboMax:
                                 console.log("HBO Max video is played!");
                                 break;
-                            case streamingPlatform.youTube:
+                            case STREAMING_PLATFORM.youTube:
                                 youTubePlay();
                                 break;
-                            case streamingPlatform.disneyPlus:
+                            case STREAMING_PLATFORM.disneyPlus:
                                 console.log("Disney+ video is played!");
                                 break;
-                            case streamingPlatform.amazonPrimeVideo:
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
                                 console.log("Amazon Prime Video video is played!");
                                 break;
                             default:
-                                console.warn("Streaming platform is undefined.");
+                                this.video.play();
                                 break;
                         }
                         break;
                     case "pause":
                         switch(this.streamingPlatform) {
-                            case streamingPlatform.netflix:
+                            case STREAMING_PLATFORM.netflix:
                                 netflixPause();
                                 break;
-                            case streamingPlatform.hboMax:
+                            case STREAMING_PLATFORM.hboMax:
                                 console.log("HBO Max video is paused!");
                                 break;
-                            case streamingPlatform.youTube:
+                            case STREAMING_PLATFORM.youTube:
                                 youTubePause();
                                 break;
-                            case streamingPlatform.disneyPlus:
+                            case STREAMING_PLATFORM.disneyPlus:
                                 console.log("Disney+ video is paused!");
                                 break;
-                            case streamingPlatform.amazonPrimeVideo:
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
                                 console.log("Amazon Prime Video video is paused!");
                                 break;
                             default:
-                                console.warn("Streaming platform is undefined.");
+                                this.video.pause();
                                 break;
                         }
                         break;
                     case "seeked":
                         switch(this.streamingPlatform) {
-                            case streamingPlatform.netflix:
+                            case STREAMING_PLATFORM.netflix:
                                 netflixSeek(message.currentTime);
                                 break;
-                            case streamingPlatform.hboMax:
+                            case STREAMING_PLATFORM.hboMax:
                                 console.log("HBO Max video is seeked!");
                                 break;
-                            case streamingPlatform.youTube:
+                            case STREAMING_PLATFORM.youTube:
                                 youTubeSeek(message.currentTime)
                                 break;
-                            case streamingPlatform.disneyPlus:
+                            case STREAMING_PLATFORM.disneyPlus:
                                 console.log("Disney+ video is seeked!");
                                 break;
-                            case streamingPlatform.amazonPrimeVideo:
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
                                 console.log("Amazon Prime Video video is seeked!");
                                 break;
                             default:
-                                console.warn("Streaming platform is undefined.");
+                                this.video.currentTime = message.currentTime;
                                 break;    
                         }
                         break;
@@ -204,67 +203,67 @@ export class ClientSocketHandler {
             switch (eventInfo.event) {
                 case "pause":
                     switch(this.streamingPlatform) {
-                        case streamingPlatform.netflix:
+                        case STREAMING_PLATFORM.netflix:
                             netflixPlay();
                             break;
-                        case streamingPlatform.hboMax:
+                        case STREAMING_PLATFORM.hboMax:
                             console.log("HBO Max video is played!");
                             break;
-                        case streamingPlatform.youTube:
+                        case STREAMING_PLATFORM.youTube:
                             youTubePlay();
                             break;
-                        case streamingPlatform.disneyPlus:
+                        case STREAMING_PLATFORM.disneyPlus:
                             console.log("Disney+ video is played!");
                             break;
-                        case streamingPlatform.amazonPrimeVideo:
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
                             console.log("Amazon Prime Video video is played!");
                             break;
                         default:
-                            console.warn("Streaming platform is undefined.");
+                            this.video.play();
                             break;
                     }
                     break;
                 case "play":
                     switch(this.streamingPlatform) {
-                        case streamingPlatform.netflix:
+                        case STREAMING_PLATFORM.netflix:
                             netflixPause();
                             break;
-                        case streamingPlatform.hboMax:
+                        case STREAMING_PLATFORM.hboMax:
                             console.log("HBO Max video is paused!");
                             break;
-                        case streamingPlatform.youTube:
+                        case STREAMING_PLATFORM.youTube:
                             youTubePause();
                             break;
-                        case streamingPlatform.disneyPlus:
+                        case STREAMING_PLATFORM.disneyPlus:
                             console.log("Disney+ video is paused!");
                             break;
-                        case streamingPlatform.amazonPrimeVideo:
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
                             console.log("Amazon Prime Video video is paused!");
                             break;
                         default:
-                            console.warn("Streaming platform is undefined.");
+                            this.video.pause();
                             break;
                     }
                     break;
                 case "seeked":
                     switch(this.streamingPlatform) {
-                        case streamingPlatform.netflix:
+                        case STREAMING_PLATFORM.netflix:
                             netflixSeek(this.supposedCurrentTime);
                             break;
-                        case streamingPlatform.hboMax:
+                        case STREAMING_PLATFORM.hboMax:
                             console.log("HBO Max video is seeked!");
                             break;
-                        case streamingPlatform.youTube:
+                        case STREAMING_PLATFORM.youTube:
                             youTubeSeek(this.supposedCurrentTime);
                             break;
-                        case streamingPlatform.disneyPlus:
+                        case STREAMING_PLATFORM.disneyPlus:
                             console.log("Disney+ video is seeked!");
                             break;
-                        case streamingPlatform.amazonPrimeVideo:
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
                             console.log("Amazon Prime Video video is seeked!");
                             break;
                         default:
-                            console.warn("Streaming platform is undefined.");
+                            this.video.currentTime = this.supposedCurrentTime;
                             break;
                     }
                     break;

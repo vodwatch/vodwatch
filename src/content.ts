@@ -1,34 +1,42 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
-import {streamingPlatform, streamingPlatformSubstring} from './streamingPlatform';
+import { STREAMING_PLATFORM, STREAMING_PLATFORM_SUBSTRING } from './streamingPlatform';
 
-if (document.location.href.includes(streamingPlatformSubstring.netflixSubstring)) {
-    createVueApp(streamingPlatform.netflix);
+var streamingPlatform: string;
+
+if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.netflixSubstring)) {
+    streamingPlatform = STREAMING_PLATFORM.netflix;
+    createVueApp();
 }
-else if (document.location.href.includes(streamingPlatformSubstring.hboMaxSubstring)) {
-    createVueApp(streamingPlatform.hboMax);
+else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.hboMaxSubstring)) {
+    streamingPlatform = STREAMING_PLATFORM.hboMax;
+    createVueApp();
 }
-else if (document.location.href.includes(streamingPlatformSubstring.youTubeSubstring)) {
-    createVueApp(streamingPlatform.youTube);
+else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.youTubeSubstring)) {
+    streamingPlatform = STREAMING_PLATFORM.youTube;
+    createVueApp();
 }
-else if (document.location.href.includes(streamingPlatformSubstring.disneyPlusSubstring)) {
-    createVueApp(streamingPlatform.disneyPlus);
+else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.disneyPlusSubstring)) {
+    streamingPlatform = STREAMING_PLATFORM.disneyPlus;
+    createVueApp();
 }
-else if (document.location.href.includes(streamingPlatformSubstring.amazonPrimeVideoSubstring)) {
-    createVueApp(streamingPlatform.amazonPrimeVideo);
+else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.amazonPrimeVideoSubstring)) {
+    streamingPlatform = STREAMING_PLATFORM.amazonPrimeVideo;
+    createVueApp();
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.text === "on video") {
-        createVueApp(request.streamingPlatform);
+        streamingPlatform = request.streamingPlatform;
+        createVueApp();
     }
 
     sendResponse({});
     return true;
 });
 
-function createVueApp(streamingPlatform: string) {
+function createVueApp() {
     const body = document.querySelector('body');
     const mountElement = document.createElement('div');
     mountElement.className = 'mount-element'

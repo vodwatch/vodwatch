@@ -22,7 +22,7 @@ import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
 import { useVideoStore } from './stores/videoStore';
 import { useSocketStore } from "./stores/socketStore";
-import { inject, onMounted, Ref, ref,  } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
 const videoStore = useVideoStore();
 
@@ -32,8 +32,6 @@ onMounted(() => {
 
 const socketStore = useSocketStore(); // not used for testing, need to add v-if with isConnected method to Chat
 // and RoomConnect component
-
-socketStore.socket.streamingPlatform = inject('streamingPlatform');
 
 const showWidget: Ref<boolean> = ref(true);
 

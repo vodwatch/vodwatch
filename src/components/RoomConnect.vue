@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
 import { useSocketStore } from '../stores/socketStore';
@@ -42,6 +42,7 @@ const joinRoom = () => {
       emit('mockSocket', false);
     }
   });
+  socketStore.socket.streamingPlatform = inject('streamingPlatform');
 };
 
 const createRoom = () => {
@@ -59,6 +60,7 @@ const createRoom = () => {
       emit('mockSocket', false);
     }
   });
+  socketStore.socket.streamingPlatform = inject('streamingPlatform');
   if (socketStore.socket.isConnected()){
     createRoomFailed.value = false;
     return;

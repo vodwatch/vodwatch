@@ -14,18 +14,21 @@ import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
 import { useSocketStore } from '../stores/socketStore';
 import { useMessageStore } from '../stores/messageStore';
+import { useUserPermissionsStore } from '../stores/userPermissionsStore';
 
 const emit = defineEmits(['mockSocket']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();
+const userPermissionsStore = useUserPermissionsStore();
 let roomId: Ref<string> = ref('');
 let createRoomFailed: Ref<boolean> = ref(false);
 
 const initSocket = () => {
     const video = videoStore.videoHandler.getVideo();
     socketStore.socket.setVideo(video);
-    socketStore.socket.setChatMessages(messageStore.messages)
+    socketStore.socket.setChatMessages(messageStore.messages);
+    socketStore.socket.setPiniaStore(userPermissionsStore);
     videoStore.videoHandler.setSocketHandler(socketStore.socket);
 };
 

@@ -18,19 +18,22 @@ const SocketEventType = {
 };
 
 interface MessageFromServer {
-    permissions: Permissions,
+    my_id: string,
+    permissions: UsersPermissions[],
     roomId: string,
 }
 
 export class ClientSocketHandler {
     private readonly serverUrl: string = "http://localhost:5000";
     private roomId!: string;
+    private myId!: string;
     private socket!: Socket;
     private video!: HTMLVideoElement;
-    private permissions!: Permissions;
+    permissions!: UsersPermissions[];
     private chatMessages!: Message[];
     private eventSemaphore: boolean = false;
     supposedCurrentTime: number = 0;
+    private piniaStore;
 
     openConnection = (afterConnectionCallback: () => void) => {
         this.socket = io(this.serverUrl);
@@ -66,14 +69,19 @@ export class ClientSocketHandler {
             }
         );
         this.socket.on(SocketEventType.PERMISSIONS, (message: MessageFromServer) => {
-            console.log(message);
             if (message.permissions && message.roomId) {
+                this.piniaStore.setUserPermissions(message.permissions);
+                console.log(message);
+                if(message?.my_id !== '') {
+                    this.myId = message?.my_id;
+                }
                 this.permissions = message?.permissions;
                 this.roomId = message?.roomId;
             } else {
                 throw new Error(`Haven't received payload from server.`)
             }
         });
+        
         this.socket.on(SocketEventType.RECEIVE_MESSAGE, (message: Message) => {
             console.log("Incoming message:", message);
             if(!this.chatMessages)
@@ -115,7 +123,7 @@ export class ClientSocketHandler {
         if (this.eventSemaphore) {
             return;
         }
-        if(!this.permissions['vodControl']) {
+        if(!this.permissions[this.myId]['vodControl']) {
 
             this.eventSemaphore = true;
             switch (eventInfo.event) {
@@ -214,7 +222,7 @@ export class ClientSocketHandler {
         this.socket.close();
     };
 
-    getPermissions = (): Permissions => this.permissions;
+    getPermissions = (): UsersPermissions[] => this.permissions;
 
     setVideo = (video: HTMLVideoElement) => {
         this.video = video;
@@ -226,6 +234,10 @@ export class ClientSocketHandler {
 
     setChatMessages = (chatMessages : Message[]) => {
         this.chatMessages = chatMessages;
+    }
+
+    setPiniaStore = (piniaStore) => {
+        this.piniaStore = piniaStore;
     }
 
     private checkForErrors = () => {

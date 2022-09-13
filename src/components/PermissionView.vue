@@ -23,18 +23,19 @@ import type { Ref } from 'vue';
 
 import type { UsersPermissions } from "../modules/interfaces/interfaces";
 import { useSocketStore } from '../stores/socketStore';
+import { useUserPermissionsStore } from '../stores/userPermissionsStore';
 
 const socketStore = useSocketStore();
+const userPermissionsStore = useUserPermissionsStore();
 
-const permissions: Ref<UsersPermissions[]> = ref([]);
+const permissions: Ref<UsersPermissions[]> = ref(userPermissionsStore.userPermissions);
+
 watch(permissions, (permissionsChange) => {
-  //send to backend\
+  //send to backend
   socketStore.socket.setUsersPermissions(permissions.value);
+  // userPermissionsStore.setUserPermissions(permissions.value);
 }, { deep: true });
-onMounted(async () => {
-  // fetch all users in a room and their permissions
-  permissions.value = await socketStore.socket.fetchAllUsersInRoom();
-})
+
 </script>
 
 <style scoped>

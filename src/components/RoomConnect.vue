@@ -53,7 +53,7 @@ const joinRoom = () => {
 const createRoom = () => {
   socketStore.socket.openConnection(async () => {
     initSocket();
-    roomId.value = uuid();
+    roomId.value = uuid().slice(0,5).toUpperCase();
     try {
       await socketStore.socket.createRoom(roomId.value);
       createRoomFailed.value = false;

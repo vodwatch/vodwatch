@@ -42,7 +42,7 @@ import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
 import {Message, UsersPermissions} from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
-import { useUserPermissionsStore } from ".@/src/stores/userPermissionsStore";
+import { useUserPermissionsStore } from "../stores/userPermissionsStore";
 
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();

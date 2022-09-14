@@ -2,7 +2,6 @@ import { io, Socket } from "socket.io-client";
 import { Message, UsersPermissions } from './interfaces/interfaces';
 import { netflixPlay, netflixPause, netflixSeek } from "./services/NetflixService";
 import { EventInfo } from "./video";
-import { Permissions } from './interfaces/interfaces';
 
 const SocketEventType = {
     SEND_MESSAGE: "send_message",
@@ -223,6 +222,8 @@ export class ClientSocketHandler {
     };
 
     getPermissions = (): UsersPermissions[] => this.permissions;
+
+    getMyId = (): string => this.myId;
 
     setVideo = (video: HTMLVideoElement) => {
         this.video = video;

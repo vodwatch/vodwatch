@@ -16,7 +16,8 @@
         </p>
       </div>
     </div>
-    <div class="message-input-container">
+    <div v-if="myPermissions.chat"
+        class="message-input-container">
       <textarea
           class="message-input"
           type="text"
@@ -30,7 +31,8 @@
         </template>
       </Popper>
     </div>
-    <button @click="sendMessage">Send</button>
+    <button  :disabled="myPermissions.chat"
+        @click="sendMessage">Send</button>
   </div>
 </template>
 
@@ -38,15 +40,24 @@
 import { ref, computed } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
-import { Message } from '../modules/interfaces/interfaces';
+import {Message, UsersPermissions} from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
+import { useUserPermissionsStore } from ".@/src/stores/userPermissionsStore";
+
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();
+const userPermissionsStore = useUserPermissionsStore();
 
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
+
+const permissions: Ref<UsersPermissions[]> = ref(userPermissionsStore.userPermissions);
+
+const myPermissions = computed(() => {
+    return permissions.value[socketStore.socket.getMyId()];
+})
 
 const messages: Ref<Message[]> = ref(messageStore.messages);
 

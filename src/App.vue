@@ -22,7 +22,7 @@ import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
 import { useVideoStore } from './stores/videoStore';
 import { useSocketStore } from "./stores/socketStore";
-import { onMounted, Ref, ref } from 'vue';
+import { inject, onMounted, Ref, ref } from 'vue';
 
 const videoStore = useVideoStore();
 
@@ -40,6 +40,8 @@ const hideOrShowWidget = () => {
 }
 
 const isConnected: Ref<boolean> = ref(false);
+
+socketStore.socket.streamingPlatform = inject('streamingPlatform');
 
 const mockSocket = (socketIsConnected : boolean) => {
     isConnected.value = socketIsConnected;

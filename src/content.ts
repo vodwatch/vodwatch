@@ -3,31 +3,33 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import { STREAMING_PLATFORM, STREAMING_PLATFORM_SUBSTRING } from './streamingPlatform';
 
-var streamingPlatform: string;
+let streamingPlatform: string;
 
-if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.netflixSubstring)) {
-    streamingPlatform = STREAMING_PLATFORM.netflix;
-    createVueApp();
-}
-else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.hboMaxSubstring)) {
-    streamingPlatform = STREAMING_PLATFORM.hboMax;
-    createVueApp();
-}
-else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.youTubeSubstring)) {
-    streamingPlatform = STREAMING_PLATFORM.youTube;
-    createVueApp();
-}
-else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.disneyPlusSubstring)) {
-    streamingPlatform = STREAMING_PLATFORM.disneyPlus;
-    createVueApp();
-}
-else if (document.location.href.includes(STREAMING_PLATFORM_SUBSTRING.amazonPrimeVideoSubstring)) {
-    streamingPlatform = STREAMING_PLATFORM.amazonPrimeVideo;
-    createVueApp();
+switch(true) {
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.netflixSubstring):  
+        streamingPlatform = STREAMING_PLATFORM.netflix;
+        createVueApp();
+        break;
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.youTubeSubstring):
+        streamingPlatform = STREAMING_PLATFORM.youTube;
+        createVueApp();
+        break;
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.hboMaxSubstring):
+        streamingPlatform = STREAMING_PLATFORM.hboMax;
+        createVueApp();
+        break;
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.disneyPlusSubstring):
+        streamingPlatform = STREAMING_PLATFORM.disneyPlus;
+        createVueApp();
+        break;
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.amazonPrimeVideoSubstring):
+        streamingPlatform = STREAMING_PLATFORM.amazonPrimeVideo;
+        createVueApp();
+        break;
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.text === "on video") {
+    if (request.text === "on video" && request.streamingPlatform !== undefined) {
         streamingPlatform = request.streamingPlatform;
         createVueApp();
     }
@@ -47,4 +49,8 @@ function createVueApp() {
     app.use(pinia);
     app.provide('streamingPlatform', streamingPlatform);
     app.mount('.mount-element');
+}
+
+function hrefIncludesSubstring(substring: string) {
+    return document.location.href.includes(substring);
 }

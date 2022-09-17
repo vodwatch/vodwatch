@@ -76,6 +76,7 @@ export class ClientSocketHandler {
                                     break;
                             }
                         }
+
                         switch(this.streamingPlatform) {
                             case STREAMING_PLATFORM.netflix:
                                 netflixPlay();
@@ -159,6 +160,7 @@ export class ClientSocketHandler {
             console.log("Incoming message:", message);
             if(!this.chatMessages)
                 throw new Error("Chat messages reference is not set!")
+
             this.chatMessages.push(message);
         });
     };
@@ -167,6 +169,7 @@ export class ClientSocketHandler {
         this.checkForErrors();
         if (this.roomId == null)
             throw new Error("You are not in a room!");
+
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.SEND_MESSAGE,
@@ -179,6 +182,7 @@ export class ClientSocketHandler {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
+
                     resolve(response);
                 }
             );
@@ -188,6 +192,7 @@ export class ClientSocketHandler {
     sendVideoEvent = async (eventInfo: EventInfo) => {
         this.checkForErrors()
         if (this.roomId == null) throw new Error("You are not in a room!");
+
         const data = {
             eventInfo,
             roomId: this.roomId,
@@ -285,6 +290,7 @@ export class ClientSocketHandler {
 
     joinRoom = (roomId: string) => {
         this.checkForErrors();
+
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.JOIN_ROOM,
@@ -293,6 +299,7 @@ export class ClientSocketHandler {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
+
                     resolve(response);
                 }
             );
@@ -301,6 +308,7 @@ export class ClientSocketHandler {
 
     createRoom = (roomId: string) => {
         this.checkForErrors();
+        
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.CREATE_ROOM,
@@ -309,6 +317,7 @@ export class ClientSocketHandler {
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
                     }
+                    
                     resolve(response);
                 }
             );

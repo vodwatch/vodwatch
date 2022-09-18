@@ -1,51 +1,61 @@
 <template>
-    <div class="permissions-container">
-        <div v-for="(userPermission, index) of permissions" :key="index" class="user-permissions">
-            {{ userPermission.username }}
-          <input type="checkbox" id="vod-control" v-model="userPermission.permissions.vodControl">
-          <label for="vod-control">VOD control:</label>
+  <div class="permissions-container" >
+    <div v-for="(permission, username, index) in permissions" class="user-permissions" v-if="renderComponent">
+      {{username}}
+      <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
+      <label for="vod-control">VOD control:</label>
 
-          <input type="checkbox" id="chat" v-model="userPermission.permissions.chat">
-          <label for="chat">Chat:</label>
+      <input type="checkbox" id="chat" v-model="permission.permissions.chat">
+      <label for="chat">Chat:</label>
 
-          <input type="checkbox" id="kick" v-model="userPermission.permissions.kick">
-          <label for="kick">Kick:</label>
-        </div>
-        <div>
-          {{permissions}}
-        </div>
+      <input type="checkbox" id="kick" v-model="permission.permissions.kick">
+      <label for="kick">Kick:</label>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import type { Ref } from 'vue';
 
-import type { UsersPermissions } from "../modules/interfaces/interfaces";
+import type { UserPermissions } from "../modules/interfaces/interfaces";
 import { useSocketStore } from '../stores/socketStore';
-import { useUserPermissionsStore } from '../stores/userPermissionsStore';
+import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 
 const socketStore = useSocketStore();
-const userPermissionsStore = useUserPermissionsStore();
+const userPermissionsStore = useUsersPermissionsStore();
 
-const permissions: Ref<UsersPermissions[]> = ref(userPermissionsStore.userPermissions);
+const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
+const renderComponent = ref(true);
 
-watch(permissions, (permissionsChange) => {
+watch(permissions, async (changedPermissions) => {
   //send to backend
-  socketStore.socket.setUsersPermissions(permissions.value);
-  // userPermissionsStore.setUserPermissions(permissions.value);
+  userPermissionsStore.usersPermissions = changedPermissions;
+  await socketStore.socket.setUsersPermissions(changedPermissions);
+  forceRerender();
 }, { deep: true });
+
+watch(useUsersPermissionsStore(), (changedPermissions) => {
+  forceRerender();
+}, { deep: true });
+
+const forceRerender = async () => {
+  renderComponent.value = false;
+	await nextTick();
+  renderComponent.value = true;
+};
 
 </script>
 
 <style scoped>
-  .permissions-container {
-    height: 50vh;
-    border-radius: 5px;
-    width: 15vw;
-  }
-  .user-permissions {
-    display:flex;
-    gap:1em
-  }
+.permissions-container {
+  height: 50vh;
+  border-radius: 5px;
+  width: 15vw;
+}
+
+.user-permissions {
+  display: flex;
+  gap: 1em
+}
 </style>

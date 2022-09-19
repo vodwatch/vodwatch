@@ -1,7 +1,9 @@
 import { io, Socket } from "socket.io-client";
+import { netflixPlay, netflixPause, netflixSeek} from "./services/NetflixService";
+import { youTubePlay, youTubePause, youTubeSeek} from "./services/YouTubeService";
 import { Message, UserPermissions } from './interfaces/interfaces';
-import { netflixPlay, netflixPause, netflixSeek } from "./services/NetflixService";
 import { EventInfo } from "./video";
+import { STREAMING_PLATFORM } from '../streamingPlatform';
 import { Permissions } from './interfaces/interfaces';
 import { useUsersPermissionsStore } from "../stores/usersPermissionsStore";
 
@@ -41,22 +43,98 @@ export class ClientSocketHandler {
                 this.eventSemaphore = true;
                 switch (message.event) {
                     case "play":
-                        if (Math.abs(this.video.currentTime - message.currentTime) > 0.5) {
-                            netflixSeek(message.currentTime);
+                        if (Math.abs(this.video.currentTime - message.currentTime) > 0.5 ) {
+                            switch(this.streamingPlatform) {
+                                case STREAMING_PLATFORM.netflix:
+                                    netflixSeek(message.currentTime);
+                                    break;
+                                case STREAMING_PLATFORM.hboMax:
+                                    console.log("HBO Max video is seeked!");
+                                    break;
+                                case STREAMING_PLATFORM.youTube:
+                                    youTubeSeek(message.currentTime);
+                                    break;
+                                case STREAMING_PLATFORM.disneyPlus:
+                                    console.log("Disney+ video is seeked!");
+                                    break;
+                                case STREAMING_PLATFORM.amazonPrimeVideo:
+                                    console.log("Amazon Prime Video video is seeked!");
+                                    break;
+                                default:
+                                    this.video.currentTime = message.currentTime;
+                                    break;
+                            }
                         }
-                        netflixPlay();
+
+                        switch(this.streamingPlatform) {
+                            case STREAMING_PLATFORM.netflix:
+                                netflixPlay();
+                                break;
+                            case STREAMING_PLATFORM.hboMax:
+                                console.log("HBO Max video is played!");
+                                break;
+                            case STREAMING_PLATFORM.youTube:
+                                youTubePlay();
+                                break;
+                            case STREAMING_PLATFORM.disneyPlus:
+                                console.log("Disney+ video is played!");
+                                break;
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
+                                console.log("Amazon Prime Video video is played!");
+                                break;
+                            default:
+                                this.video.play();
+                                break;
+                        }
                         break;
                     case "pause":
-                        netflixPause();
+                        switch(this.streamingPlatform) {
+                            case STREAMING_PLATFORM.netflix:
+                                netflixPause();
+                                break;
+                            case STREAMING_PLATFORM.hboMax:
+                                console.log("HBO Max video is paused!");
+                                break;
+                            case STREAMING_PLATFORM.youTube:
+                                youTubePause();
+                                break;
+                            case STREAMING_PLATFORM.disneyPlus:
+                                console.log("Disney+ video is paused!");
+                                break;
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
+                                console.log("Amazon Prime Video video is paused!");
+                                break;
+                            default:
+                                this.video.pause();
+                                break;
+                        }
                         break;
                     case "seeked":
-                        netflixSeek(this.supposedCurrentTime);
+                        switch(this.streamingPlatform) {
+                            case STREAMING_PLATFORM.netflix:
+                                netflixSeek(message.currentTime);
+                                break;
+                            case STREAMING_PLATFORM.hboMax:
+                                console.log("HBO Max video is seeked!");
+                                break;
+                            case STREAMING_PLATFORM.youTube:
+                                youTubeSeek(message.currentTime)
+                                break;
+                            case STREAMING_PLATFORM.disneyPlus:
+                                console.log("Disney+ video is seeked!");
+                                break;
+                            case STREAMING_PLATFORM.amazonPrimeVideo:
+                                console.log("Amazon Prime Video video is seeked!");
+                                break;
+                            default:
+                                this.video.currentTime = message.currentTime;
+                                break;
+                        }
                         break;
-
                 }
                 setTimeout(() => {
                     this.eventSemaphore = false;
-                }, 500);
+                }, 1000);
             }
         );
 
@@ -80,15 +158,17 @@ export class ClientSocketHandler {
                 SocketEventType.SEND_MESSAGE,
                 message,
                 (response: string) => {
+                    console.log("Message sent successfuly!");
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
+
                     resolve(response);
                 }
             );
         });
     };
-
+    
     sendVideoEvent = async (eventInfo: EventInfo) => {
         this.checkForErrors()
         if (this.eventSemaphore) {
@@ -99,18 +179,75 @@ export class ClientSocketHandler {
             this.eventSemaphore = true;
             switch (eventInfo.event) {
                 case "pause":
-                    netflixPlay();
+                    switch(this.streamingPlatform) {
+                        case STREAMING_PLATFORM.netflix:
+                            netflixPlay();
+                            break;
+                        case STREAMING_PLATFORM.hboMax:
+                            console.log("HBO Max video is played!");
+                            break;
+                        case STREAMING_PLATFORM.youTube:
+                            youTubePlay();
+                            break;
+                        case STREAMING_PLATFORM.disneyPlus:
+                            console.log("Disney+ video is played!");
+                            break;
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
+                            console.log("Amazon Prime Video video is played!");
+                            break;
+                        default:
+                            this.video.play();
+                            break;
+                    }
                     break;
                 case "play":
-                    netflixPause();
+                    switch(this.streamingPlatform) {
+                        case STREAMING_PLATFORM.netflix:
+                            netflixPause();
+                            break;
+                        case STREAMING_PLATFORM.hboMax:
+                            console.log("HBO Max video is paused!");
+                            break;
+                        case STREAMING_PLATFORM.youTube:
+                            youTubePause();
+                            break;
+                        case STREAMING_PLATFORM.disneyPlus:
+                            console.log("Disney+ video is paused!");
+                            break;
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
+                            console.log("Amazon Prime Video video is paused!");
+                            break;
+                        default:
+                            this.video.pause();
+                            break;
+                    }
                     break;
                 case "seeked":
-                    netflixSeek(this.supposedCurrentTime);
+                    switch(this.streamingPlatform) {
+                        case STREAMING_PLATFORM.netflix:
+                            netflixSeek(this.supposedCurrentTime);
+                            break;
+                        case STREAMING_PLATFORM.hboMax:
+                            console.log("HBO Max video is seeked!");
+                            break;
+                        case STREAMING_PLATFORM.youTube:
+                            youTubeSeek(this.supposedCurrentTime);
+                            break;
+                        case STREAMING_PLATFORM.disneyPlus:
+                            console.log("Disney+ video is seeked!");
+                            break;
+                        case STREAMING_PLATFORM.amazonPrimeVideo:
+                            console.log("Amazon Prime Video video is seeked!");
+                            break;
+                        default:
+                            this.video.currentTime = this.supposedCurrentTime;
+                            break;
+                    }
                     break;
             }
             setTimeout(() => {
                 this.eventSemaphore = false;
-            }, 50);
+            }, 1000);
         } else {
             this.socket.emit(
                 SocketEventType.SEND_VIDEO_EVENT,
@@ -123,6 +260,7 @@ export class ClientSocketHandler {
 
     joinRoom = (roomId: string) => {
         this.checkForErrors();
+
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.JOIN_ROOM,
@@ -131,6 +269,7 @@ export class ClientSocketHandler {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
+
                     resolve(response);
                 }
             );
@@ -146,6 +285,7 @@ export class ClientSocketHandler {
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
                     }
+
                     resolve(response);
                 }
             );
@@ -182,7 +322,7 @@ export class ClientSocketHandler {
         return this.socket.connected;
     }
 
-    setChatMessages = (chatMessages: Message[]) => {
+    setChatMessages = (chatMessages : Message[]) => {
         this.chatMessages = chatMessages;
     }
 

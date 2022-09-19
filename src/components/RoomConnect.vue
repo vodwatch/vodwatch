@@ -61,10 +61,12 @@ const createRoom = () => {
       console.log("create room failed!");
     }
   });
+
   if (socketStore.socket.isConnected()){
     createRoomFailed.value = false;
     return;
   }
+
   createRoomFailed.value = true;
   emit('mockSocket', true);
 }

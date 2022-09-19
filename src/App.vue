@@ -33,8 +33,8 @@ import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
 import PermissionView from './components/PermissionView.vue';
 import { useVideoStore } from './stores/videoStore';
-// import { useSocketStore } from "./stores/socketStore";
-import { onMounted, Ref, ref } from 'vue';
+import { useSocketStore } from "./stores/socketStore";
+import { inject, onMounted, Ref, ref } from 'vue';
 
 const videoStore = useVideoStore();
 
@@ -42,7 +42,7 @@ onMounted(() => {
   videoStore.videoHandler.addVideoEventListeners();
 })
 
- // const socketStore = useSocketStore();  //not used for testing, need to add v-if with isConnected method to Chat
+const socketStore = useSocketStore(); // not used for testing, need to add v-if with isConnected method to Chat
 // and RoomConnect component
 
 const showWidget: Ref<boolean> = ref(true);
@@ -52,6 +52,8 @@ const hideOrShowWidget = () => {
 }
 
 const isConnected: Ref<boolean> = ref(false);
+
+socketStore.socket.streamingPlatform = inject('streamingPlatform');
 
 const mockSocket = (socketIsConnected : boolean) => {
     isConnected.value = socketIsConnected;

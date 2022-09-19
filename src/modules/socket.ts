@@ -4,7 +4,6 @@ import { youTubePlay, youTubePause, youTubeSeek} from "./services/YouTubeService
 import { Message, UserPermissions } from './interfaces/interfaces';
 import { EventInfo } from "./video";
 import { STREAMING_PLATFORM } from '../streamingPlatform';
-import { Permissions } from './interfaces/interfaces';
 import { useUsersPermissionsStore } from "../stores/usersPermissionsStore";
 
 const SocketEventType = {

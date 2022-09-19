@@ -24,6 +24,7 @@ export class ClientSocketHandler {
     private video!: HTMLVideoElement;
     private chatMessages!: Message[];
     private eventSemaphore: boolean = false;
+    public streamingPlatform?: string;
     private userPermissionsStore = useUsersPermissionsStore();
     supposedCurrentTime: number = 0;
 

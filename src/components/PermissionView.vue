@@ -1,6 +1,6 @@
 <template>
   <div class="permissions-container" >
-    <div v-for="(permission, username, index) in permissions" class="user-permissions">
+    <div v-for="(permission, username, index) in permissions" :key="index" class="user-permissions">
       {{username}}
       <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
       <label for="vod-control">VOD control:</label>
@@ -15,12 +15,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import type { Ref } from 'vue';
 
 import type { UserPermissions } from "../modules/interfaces/interfaces";
 import { useSocketStore } from '../stores/socketStore';
 import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
+
+const props = defineProps({
+    isDev: {type: Boolean, required: false},
+});
 
 const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
@@ -28,11 +32,38 @@ const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
 
 watch(permissions, async (changedPermissions) => {
-  //send to backend
   userPermissionsStore.usersPermissions = changedPermissions;
   await socketStore.socket.setUsersPermissions(changedPermissions);
 }, { deep: true });
 
+onMounted(() => {
+    if (props.isDev) permissions.value = [
+        {
+            username: 'a',
+            permissions: {
+                vodControl: true,
+                chat: true,
+                kick: true,
+            }
+        },
+        {
+            username: 'b',
+            permissions: {
+                vodControl: true,
+                chat: true,
+                kick: true,
+            }
+        },
+        {
+            username: 'me',
+            permissions: {
+                vodControl: true,
+                chat: true,
+                kick: true,
+            }
+        }
+    ];
+})
 </script>
 
 <style scoped>

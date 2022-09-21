@@ -1,5 +1,7 @@
 <template>
     <div id="app">
+        <label>Dev</label>
+        <input type="checkbox" v-model="isDev">
         <a
             href="#"
             @click="hideOrShowWidget()"
@@ -14,13 +16,13 @@
             v-else>
           Show widget.
         </a>
-        <RoomConnect v-if="showWidget && !isConnected" @mockSocket="mockSocket"></RoomConnect>
-        <Chat v-if="showWidget && isConnected && !permissionViewToggle"></Chat>
+        <RoomConnect v-if="showWidget && !isConnected" :is-dev="isDev" @mockSocket="mockSocket" />
+        <Chat v-if="showWidget && isConnected && !permissionViewToggle" :is-dev="isDev"/>
         <a href="#"
           v-if="showWidget && isConnected && !permissionViewToggle" @click="changePermissionView">
           Manage Permissions
         </a>
-        <PermissionView v-if="showWidget && permissionViewToggle"/>
+        <PermissionView v-if="showWidget && isConnected && permissionViewToggle" :is-dev="isDev" />
         <a href="#"
            v-if="showWidget && isConnected && permissionViewToggle" @click="changePermissionView">
           Go back to chat
@@ -48,17 +50,18 @@ onMounted(() => {
 const showWidget: Ref<boolean> = ref(true);
 
 const hideOrShowWidget = () => {
-  showWidget.value = ! showWidget.value;
+  showWidget.value = !showWidget.value;
 }
 
 const isConnected: Ref<boolean> = ref(false);
 
-socketStore.socket.streamingPlatform = inject('streamingPlatform');
+const isDev: Ref<boolean> = ref(false);
 
 const mockSocket = (socketIsConnected : boolean) => {
     isConnected.value = socketIsConnected;
 }
 
+socketStore.socket.streamingPlatform = inject('streamingPlatform');
 
 const permissionViewToggle: Ref<boolean> = ref(false);
 const changePermissionView = () => {

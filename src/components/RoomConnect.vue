@@ -14,6 +14,9 @@ import { useVideoStore } from "../stores/videoStore";
 import { useSocketStore } from '../stores/socketStore';
 import { useMessageStore } from '../stores/messageStore';
 
+const props = defineProps({
+    isDev: {type: Boolean, required: false},
+});
 const emit = defineEmits(['mockSocket']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
@@ -34,13 +37,11 @@ const joinRoom = () => {
     try {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
-      emit('mockSocket', true);
       console.log("joined the room!");
       
     }
     catch {
       createRoomFailed.value = true;
-      emit('mockSocket', false);
       console.log("join room failed!");
     }
   });
@@ -66,10 +67,13 @@ const createRoom = () => {
     createRoomFailed.value = false;
     return;
   }
-
+  
   createRoomFailed.value = true;
-  emit('mockSocket', true);
+
+  console.log(props.isDev)
+  if (props.isDev) emit('mockSocket', true);
 }
+
 </script>
 
 <style scoped>

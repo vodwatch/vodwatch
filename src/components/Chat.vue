@@ -35,18 +35,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
 import { Message } from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
-const socketStore = useSocketStore();
-const messageStore = useMessageStore();
-
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
+
+const props = defineProps({
+    isDev: {type: Boolean, required: false},
+});
+
+const socketStore = useSocketStore();
+const messageStore = useMessageStore();
 
 const messages: Ref<Message[]> = ref(messageStore.messages);
 
@@ -80,6 +84,24 @@ const sendMessage = () => {
 const onSelectEmoji = (emote) => {
   messageText.value += emote.i;
 }
+
+onMounted( () => {
+    if (props.isDev) messages.value = [
+        {
+            from: 'a',
+            content: 'Hello',
+        },
+        {
+            from: 'b',
+            content: 'Hi again'
+        },
+        {
+            from: 'me',
+            content: "It's me",
+        }
+    ];
+    console.log(messages.value);
+})
 </script>
 
 <style scoped>

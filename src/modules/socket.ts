@@ -158,7 +158,6 @@ export class ClientSocketHandler {
                 SocketEventType.SEND_MESSAGE,
                 message,
                 (response: string) => {
-                    console.log("Message sent successfuly!");
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
                     }
@@ -168,13 +167,14 @@ export class ClientSocketHandler {
             );
         });
     };
-    
+
     sendVideoEvent = async (eventInfo: EventInfo) => {
         this.checkForErrors()
         if (this.eventSemaphore) {
             return;
         }
-        if (!this.userPermissionsStore.usersPermissions[this.socket.id]['vodControl']) {
+
+        if (!this.userPermissionsStore.usersPermissions[this.socket.id]['permissions']['vodControl']) {
 
             this.eventSemaphore = true;
             switch (eventInfo.event) {
@@ -322,7 +322,7 @@ export class ClientSocketHandler {
         return this.socket.connected;
     }
 
-    setChatMessages = (chatMessages : Message[]) => {
+    setChatMessages = (chatMessages: Message[]) => {
         this.chatMessages = chatMessages;
     }
 

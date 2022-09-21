@@ -1,6 +1,6 @@
 <template>
   <div class="permissions-container" >
-    <div v-for="(permission, username, index) in permissions" class="user-permissions" v-if="renderComponent">
+    <div v-for="(permission, username, index) in permissions" class="user-permissions">
       {{username}}
       <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
       <label for="vod-control">VOD control:</label>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch } from 'vue';
 import type { Ref } from 'vue';
 
 import type { UserPermissions } from "../modules/interfaces/interfaces";
@@ -26,24 +26,12 @@ const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
 
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
-const renderComponent = ref(true);
 
 watch(permissions, async (changedPermissions) => {
   //send to backend
   userPermissionsStore.usersPermissions = changedPermissions;
   await socketStore.socket.setUsersPermissions(changedPermissions);
-  forceRerender();
 }, { deep: true });
-
-watch(useUsersPermissionsStore(), (changedPermissions) => {
-  forceRerender();
-}, { deep: true });
-
-const forceRerender = async () => {
-  renderComponent.value = false;
-	await nextTick();
-  renderComponent.value = true;
-};
 
 </script>
 

@@ -42,7 +42,7 @@ onMounted(() => {
   videoStore.videoHandler.addVideoEventListeners();
 })
 
-const socketStore = useSocketStore(); // not used for testing, need to add v-if with isConnected method to Chat
+ const socketStore = useSocketStore();  //not used for testing, need to add v-if with isConnected method to Chat
 // and RoomConnect component
 
 const showWidget: Ref<boolean> = ref(true);

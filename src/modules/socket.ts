@@ -93,7 +93,8 @@ export class ClientSocketHandler {
         if (this.eventSemaphore) {
             return;
         }
-        if (!this.userPermissionsStore.usersPermissions[this.socket.id]['vodControl']) {
+        
+        if (!this.userPermissionsStore.usersPermissions[this.socket.id]['permissions']['vodControl']) {
 
             this.eventSemaphore = true;
             switch (eventInfo.event) {

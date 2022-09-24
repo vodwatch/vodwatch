@@ -60,6 +60,7 @@ export class ClientSocketHandler {
                                     netflixSeek(message.currentTime);
                                     break;
                                 case STREAMING_PLATFORM.hboMax:
+                                    this.video.currentTime = message.currentTime;
                                     console.log("HBO Max video is seeked!");
                                     break;
                                 case STREAMING_PLATFORM.youTube:
@@ -82,6 +83,7 @@ export class ClientSocketHandler {
                                 netflixPlay();
                                 break;
                             case STREAMING_PLATFORM.hboMax:
+                                this.video.play();
                                 console.log("HBO Max video is played!");
                                 break;
                             case STREAMING_PLATFORM.youTube:
@@ -104,6 +106,7 @@ export class ClientSocketHandler {
                                 netflixPause();
                                 break;
                             case STREAMING_PLATFORM.hboMax:
+                                this.video.pause();
                                 console.log("HBO Max video is paused!");
                                 break;
                             case STREAMING_PLATFORM.youTube:
@@ -126,6 +129,7 @@ export class ClientSocketHandler {
                                 netflixSeek(message.currentTime);
                                 break;
                             case STREAMING_PLATFORM.hboMax:
+                                this.video.currentTime = message.currentTime;
                                 console.log("HBO Max video is seeked!");
                                 break;
                             case STREAMING_PLATFORM.youTube:
@@ -212,6 +216,7 @@ export class ClientSocketHandler {
                             netflixPlay();
                             break;
                         case STREAMING_PLATFORM.hboMax:
+                            this.video.play();
                             console.log("HBO Max video is played!");
                             break;
                         case STREAMING_PLATFORM.youTube:
@@ -234,6 +239,7 @@ export class ClientSocketHandler {
                             netflixPause();
                             break;
                         case STREAMING_PLATFORM.hboMax:
+                            this.video.pause();
                             console.log("HBO Max video is paused!");
                             break;
                         case STREAMING_PLATFORM.youTube:
@@ -256,6 +262,7 @@ export class ClientSocketHandler {
                             netflixSeek(this.supposedCurrentTime);
                             break;
                         case STREAMING_PLATFORM.hboMax:
+                            this.video.currentTime = this.supposedCurrentTime;
                             console.log("HBO Max video is seeked!");
                             break;
                         case STREAMING_PLATFORM.youTube:

@@ -41,8 +41,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function createVueApp() {
     const body = document.querySelector('body');
     const mountElement = document.createElement('div');
-    mountElement.className = 'mount-element'
-    mountElement.style.position = 'relative';
+    mountElement.className = 'mount-element';
     body!.appendChild(mountElement);
     const pinia = createPinia();
     const app = createApp(App);

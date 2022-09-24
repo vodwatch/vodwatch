@@ -25,7 +25,8 @@ export class ClientSocketHandler {
     private video!: HTMLVideoElement;
     private chatMessages!: Message[];
     private eventSemaphore: boolean = false;
-    public streamingPlatform?: string;
+    private streamingPlatform?: undefined | string;
+    private videoId?: string;
     public roomId?: string;
     private userPermissionsStore = useUsersPermissionsStore();
     supposedCurrentTime: number = 0;
@@ -229,8 +230,8 @@ export class ClientSocketHandler {
             this.socket.emit(
                 SocketEventType.JOIN_ROOM,
                 roomId,
-                "netflix",
-                this.netflixVideoId,
+                this.streamingPlatform,
+                this.videoId,
                 (response: string) => {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
@@ -247,9 +248,8 @@ export class ClientSocketHandler {
         return new Promise<string>((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.CREATE_ROOM,
-                roomId,
-                "netflix",
-                this.netflixVideoId,
+                this.streamingPlatform,
+                this.videoId,
                 (response: string) => {
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
@@ -312,12 +312,12 @@ export class ClientSocketHandler {
         this.video = video;
     }
 
+    setStreamingPlatform = (streamingPlatform: string | undefined) => {
+        this.streamingPlatform = streamingPlatform;
+    }
+
     isConnected = () : boolean => {
         return this.socket && this.socket.connected;
-    }
-    
-    setNetflixVideoId = (netflixVideoId: string | undefined) => {   
-        this.netflixVideoId = netflixVideoId;
     }
 
     setChatMessages = (chatMessages: Message[]) => {

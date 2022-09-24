@@ -24,3 +24,19 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 function includesSubstring(substring: string, url?: string) {
   return url?.includes(substring);
 }
+
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//   let substring = "https://www.netflix.com/watch";
+//   let videoTitle;
+
+//   if (changeInfo.url?.includes(substring)) {
+//     var loadSemaphore = true;
+//     setTimeout(() => {
+//         videoTitle = document.getElementsByClassName('ltr-er76rf')[0].innerHTML;
+//         chrome.tabs.sendMessage(tabId, { text: "on video", videoTitle: videoTitle }, (message) => {
+//           return;
+//         });
+//         loadSemaphore = false;
+//     }, 5000);
+//   }
+// });

@@ -48,7 +48,7 @@ watch(useSocketStore().socket, (changedIsConnected) => {
 
 }, {deep: true})
 
-socketStore.socket.streamingPlatform = inject('streamingPlatform');
+socketStore.socket.setStreamingPlatform(inject('streamingPlatform'));
 
 const changePermissionView = () => {
   showPermissionView.value = !showPermissionView.value;

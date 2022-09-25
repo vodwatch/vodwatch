@@ -16,17 +16,19 @@
             v-else>
           Show widget.
         </a>
-        <RoomConnect v-if="showWidget && !isConnected" :is-dev="isDev" @mockSocket="mockSocket" />
-        <Chat v-if="showWidget && isConnected && !permissionViewToggle" :is-dev="isDev"/>
-        <a href="#"
-          v-if="showWidget && isConnected && !permissionViewToggle" @click="changePermissionView">
-          Manage Permissions
-        </a>
-        <PermissionView v-if="showWidget && isConnected && permissionViewToggle" :is-dev="isDev" />
-        <a href="#"
-           v-if="showWidget && isConnected && permissionViewToggle" @click="changePermissionView">
-          Go back to chat
-        </a>
+        <div v-if="showWidget">
+          <RoomConnect v-if="!isConnected" :is-dev="isDev" @joinRoomSuccess="joinRoomSuccess" />
+          <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev"/>
+          <a href="#"
+            v-if="isConnected && !showPermissionView" @click="changePermissionView">
+            Manage Permissions
+          </a>
+          <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" />
+          <a href="#"
+            v-if="isConnected && showPermissionView" @click="changePermissionView">
+            Go back to chat
+          </a>
+        </div>
     </div>
 </template>
 
@@ -44,28 +46,24 @@ onMounted(() => {
   videoStore.videoHandler.addVideoEventListeners();
 })
 
- const socketStore = useSocketStore();  //not used for testing, need to add v-if with isConnected method to Chat
-// and RoomConnect component
-
+const socketStore = useSocketStore();  
 const showWidget: Ref<boolean> = ref(true);
+const isConnected: Ref<boolean> = ref(false);
+const isDev: Ref<boolean> = ref(false);
+  const showPermissionView: Ref<boolean> = ref(false);
 
 const hideOrShowWidget = () => {
   showWidget.value = !showWidget.value;
 }
 
-const isConnected: Ref<boolean> = ref(false);
-
-const isDev: Ref<boolean> = ref(false);
-
-const mockSocket = (socketIsConnected : boolean) => {
+const joinRoomSuccess = (socketIsConnected : boolean) => {
     isConnected.value = socketIsConnected;
 }
 
 socketStore.socket.streamingPlatform = inject('streamingPlatform');
 
-const permissionViewToggle: Ref<boolean> = ref(false);
 const changePermissionView = () => {
-  permissionViewToggle.value = !permissionViewToggle.value;
+  showPermissionView.value = !showPermissionView.value;
 }
 </script>
 

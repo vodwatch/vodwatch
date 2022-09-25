@@ -15,9 +15,9 @@ import { useSocketStore } from '../stores/socketStore';
 import { useMessageStore } from '../stores/messageStore';
 
 const props = defineProps({
-    isDev: {type: Boolean, required: false},
+  isDev: { type: Boolean, required: false },
 });
-const emit = defineEmits(['mockSocket']);
+const emit = defineEmits(['joinRoomSuccess']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();
@@ -25,10 +25,10 @@ let roomId: Ref<string> = ref('');
 let createRoomFailed: Ref<boolean> = ref(false);
 
 const initSocket = () => {
-    const video = videoStore.videoHandler.getVideo();
-    socketStore.socket.setVideo(video);
-    socketStore.socket.setChatMessages(messageStore.messages);
-    videoStore.videoHandler.setSocketHandler(socketStore.socket);
+  const video = videoStore.videoHandler.getVideo();
+  socketStore.socket.setVideo(video);
+  socketStore.socket.setChatMessages(messageStore.messages);
+  videoStore.videoHandler.setSocketHandler(socketStore.socket);
 };
 
 const joinRoom = () => {
@@ -37,41 +37,45 @@ const joinRoom = () => {
     try {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
+      emit('joinRoomSuccess', true);
       console.log("joined the room!");
-      
+
     }
     catch {
       createRoomFailed.value = true;
+      emit('joinRoomSuccess', false);
       console.log("join room failed!");
     }
   });
 };
 
 const createRoom = () => {
+   if (props.isDev) {
+    emit('joinRoomSuccess', true);
+    return;
+   }
+
   socketStore.socket.openConnection(async () => {
     initSocket();
     try {
       roomId.value = await socketStore.socket.createRoom();
       createRoomFailed.value = false;
-      emit('mockSocket', true);
+      emit('joinRoomSuccess', true);
       console.log(roomId.value);
     }
     catch {
       createRoomFailed.value = true;
-      emit('mockSocket', false);
+      emit('joinRoomSuccess', false);
       console.log("create room failed!");
     }
   });
 
-  if (socketStore.socket.isConnected()){
+  if (socketStore.socket.isConnected()) {
     createRoomFailed.value = false;
     return;
   }
-  
   createRoomFailed.value = true;
 
-  console.log(props.isDev)
-  if (props.isDev) emit('mockSocket', true);
 }
 
 </script>

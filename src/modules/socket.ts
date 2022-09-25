@@ -16,6 +16,7 @@ const SocketEventType = {
     FIND_ROOM_BY_CLIENT: "find_room_by_client",
     PERMISSIONS: "permissions",
     SET_USERS_PERMISSIONS: "set_users_permissions",
+    KICK_USER: "kick_user",
 };
 
 export class ClientSocketHandler {
@@ -140,6 +141,9 @@ export class ClientSocketHandler {
 
         this.socket.on(SocketEventType.PERMISSIONS, (message: UserPermissions[]) => {
             this.userPermissionsStore.usersPermissions = message;
+            
+            
+
             console.log("received updated permissions", message);
         });
 
@@ -301,6 +305,28 @@ export class ClientSocketHandler {
                 userPermissions,
                 (response: any) => {
                     if (response === "ROOM_NOT_FOUND") {
+                        reject(response);
+                    }
+                    resolve(response);
+                }
+            );
+        });
+    }
+
+    kickUser = (username: string) => {
+        console.log("kicking user with username: ", username);
+        this.checkForErrors();
+        return new Promise((resolve, reject) => {
+            if(this.socket.id === username) {
+                console.log("u cant kick yourself");
+                reject("You can't kick yourself!");
+            }
+            this.socket.emit(
+                SocketEventType.KICK_USER,
+                username,
+                (response: any) => {
+                    if (response === "ROOM_NOT_FOUND" || 
+                        response === "OPERATION_NOT_ALLOWED") {
                         reject(response);
                     }
                     resolve(response);

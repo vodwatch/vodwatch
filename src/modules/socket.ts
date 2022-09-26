@@ -304,7 +304,7 @@ export class ClientSocketHandler {
                 SocketEventType.SET_USERS_PERMISSIONS,
                 userPermissions,
                 (response: any) => {
-                    if (response === "ROOM_NOT_FOUND") {
+                    if (response === "ROOM_NOT_FOUND" || response === "OPERATION_NOT_ALLOWED") {
                         reject(response);
                     }
                     resolve(response);

@@ -39,7 +39,6 @@ import PermissionView from './components/PermissionView.vue';
 import { useVideoStore } from './stores/videoStore';
 import { useSocketStore } from "./stores/socketStore";
 import { inject, onMounted, Ref, ref, provide } from 'vue';
-import { useCssVar } from '@vueuse/core';
 
 const videoStore = useVideoStore();
 
@@ -66,18 +65,14 @@ socketStore.socket.streamingPlatform = inject('streamingPlatform');
 const changePermissionView = () => {
   showPermissionView.value = !showPermissionView.value;
 }
-const fontSize = ref(null);
-const fontSizeVar = useCssVar('--font-size', fontSize);
+const fontSize = ref('16px');
 
-provide('fontSize', fontSizeVar);
+provide('fontSize', fontSize);
 </script>
 
 <style>
-  :root {
-    --fontSize: 16px;
-  }
   * {
-    font-size: var(--fontSize);
+    font-size: v-bind(fontSize);
   }
   #app {
     position:absolute;

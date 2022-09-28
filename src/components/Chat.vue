@@ -89,7 +89,7 @@ const onSelectEmoji = (emote) => {
   messageText.value += emote.i;
 }
 
-const fontSize = inject('fontSize') as any;
+const fontSize = inject('fontSize') as Ref<string>;
 
 const changeFontSize = () => {
   if (fontSize.value === '16px') {
@@ -115,7 +115,6 @@ onMounted( () => {
             content: "It's me",
         }
     ];
-    console.log(messages.value);
 })
 </script>
 

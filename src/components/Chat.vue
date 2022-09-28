@@ -30,12 +30,15 @@
         </template>
       </Popper>
     </div>
-    <button @click="sendMessage">Send</button>
+    <div class="chat-bottom">
+        <button @click="sendMessage">Send</button>
+        <FontIcon @click="changeFontSize"/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
 import { Message } from '../modules/interfaces/interfaces';
@@ -44,6 +47,7 @@ import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
+import FontIcon from './FontIcon.vue';
 
 const props = defineProps({
     isDev: {type: Boolean, required: false},
@@ -83,6 +87,17 @@ const sendMessage = () => {
 
 const onSelectEmoji = (emote) => {
   messageText.value += emote.i;
+}
+
+const fontSize = inject('fontSize') as any;
+
+const changeFontSize = () => {
+  if (fontSize.value === '16px') {
+    fontSize.value = '20px';
+  }
+  else {
+    fontSize.value = '16px';
+  }
 }
 
 onMounted( () => {
@@ -154,5 +169,9 @@ onMounted( () => {
 }
 .message-input {
   resize:none;
+}
+.chat-bottom {
+  display: flex;
+  align-items: center;
 }
 </style>

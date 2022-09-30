@@ -2,32 +2,30 @@
     <div id="app">
         <label>Dev</label>
         <input type="checkbox" v-model="isDev">
-        <a
-            href="#"
+        <button
             @click="hideOrShowWidget()"
             class="show-widget"
             v-if="showWidget">
           Hide widget.
-        </a>
-        <a
-            href="#"
+        </button>
+        <button
             @click="hideOrShowWidget()"
             class="show-widget"
             v-else>
           Show widget.
-        </a>
+        </button>
         <div v-if="showWidget">
           <RoomConnect v-if="!isConnected" :is-dev="isDev" @joinRoomSuccess="joinRoomSuccess" />
           <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev"/>
-          <a href="#"
+          <button
             v-if="isConnected && !showPermissionView" @click="changePermissionView">
             Manage Permissions
-          </a>
+          </button>
           <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" />
-          <a href="#"
+          <button
             v-if="isConnected && showPermissionView" @click="changePermissionView">
             Go back to chat
-          </a>
+          </button>
         </div>
     </div>
 </template>
@@ -38,7 +36,7 @@ import Chat from './components/Chat.vue';
 import PermissionView from './components/PermissionView.vue';
 import { useVideoStore } from './stores/videoStore';
 import { useSocketStore } from "./stores/socketStore";
-import { inject, onMounted, Ref, ref, provide } from 'vue';
+import { inject, onMounted, Ref, ref, watch, provide } from 'vue';
 
 const videoStore = useVideoStore();
 
@@ -48,17 +46,22 @@ onMounted(() => {
 
 const socketStore = useSocketStore();  
 const showWidget: Ref<boolean> = ref(true);
-const isConnected: Ref<boolean> = ref(false);
+const isConnected: Ref<boolean> = ref(useSocketStore().socket.isConnected());
 const isDev: Ref<boolean> = ref(false);
-  const showPermissionView: Ref<boolean> = ref(false);
+const showPermissionView: Ref<boolean> = ref(false);
 
 const hideOrShowWidget = () => {
   showWidget.value = !showWidget.value;
+  console.log("isconnected", isConnected.value);
 }
 
 const joinRoomSuccess = (socketIsConnected : boolean) => {
-    isConnected.value = socketIsConnected;
+  isConnected.value = socketIsConnected;
 }
+
+watch(useSocketStore().socket, (changedIsConnected) => {
+  isConnected.value = changedIsConnected.isConnected();
+}, {deep: true})
 
 socketStore.socket.streamingPlatform = inject('streamingPlatform');
 

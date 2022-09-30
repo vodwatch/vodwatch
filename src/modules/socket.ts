@@ -141,10 +141,14 @@ export class ClientSocketHandler {
 
         this.socket.on(SocketEventType.PERMISSIONS, (message: UserPermissions[]) => {
             this.userPermissionsStore.usersPermissions = message;
-            
-            
-
             console.log("received updated permissions", message);
+            // check if current user is present on the list of permissions
+            // if not - he is kicked from the room
+            console.log(message[this.socket.id]);
+            if(!message[this.socket.id]) {
+                console.log(console.log("You have been kicked from the room!"));
+                this.socket.disconnect();
+            }
         });
 
         this.socket.on(SocketEventType.RECEIVE_MESSAGE, (message: Message) => {
@@ -344,8 +348,8 @@ export class ClientSocketHandler {
         this.video = video;
     }
 
-    isConnected = () => {
-        return this.socket.connected;
+    isConnected = () : boolean => {
+        return this.socket && this.socket.connected;
     }
 
     setChatMessages = (chatMessages: Message[]) => {

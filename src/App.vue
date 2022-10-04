@@ -82,6 +82,7 @@ provide('fontSize', fontSize);
     top: 1vh;
     right: 2vw;
     width: 15vw;
+    z-index: 1000000;
   }
   .show-widget {
     text-align: right;

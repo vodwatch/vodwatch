@@ -1,6 +1,6 @@
 <template>
   <div class="permissions-container" >
-    <div v-for="(permission, username, index) in permissions" :key="username" class="user-permissions">
+    <div v-for="(permission, username) in permissions" :key="username" class="user-permissions">
       {{username}}
       <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
       <label for="vod-control">VOD control:</label>
@@ -32,13 +32,11 @@ const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
 
 watch(permissions, (changedPermissions) => {
-  console.log(permissions);
   userPermissionsStore.usersPermissions = changedPermissions;
   socketStore.socket.setUsersPermissions(changedPermissions);
 }, { deep: true });
 
 const kickUser = async (username: string) => {
-    console.log(username);
     await socketStore.socket.kickUser(username);
 }
 

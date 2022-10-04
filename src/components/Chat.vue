@@ -1,5 +1,6 @@
 <template>
   <div class="chat-container">
+    <div class="room-id">ROOM ID: ABCDE</div>
     <div class="chat-content">
       <div v-for="message of reversedMessages" :class="[
             'chat-message',
@@ -31,7 +32,11 @@
       </Popper>
     </div>
     <div class="chat-bottom">
-        <button @click="sendMessage">Send</button>
+        <button
+            @click="sendMessage"
+            :disabled="myPermissions">
+            Send
+        </button>
         <FontIcon @click="changeFontSize"/>
     </div>
   </div>
@@ -41,13 +46,14 @@
 import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
-import { Message } from '../modules/interfaces/interfaces';
+import {Message, UserPermissions} from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
 import FontIcon from './FontIcon.vue';
+import {useUsersPermissionsStore} from "../stores/usersPermissionsStore";
 
 const props = defineProps({
     isDev: {type: Boolean, required: false},
@@ -99,6 +105,10 @@ const changeFontSize = () => {
     fontSize.value = '16px';
   }
 }
+
+const userPermissionsStore = useUsersPermissionsStore();
+const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
+const myPermissions = computed(() => permissions ); //TODO: implement logic with getting own username
 
 onMounted( () => {
     if (props.isDev) messages.value = [
@@ -172,5 +182,8 @@ onMounted( () => {
 .chat-bottom {
   display: flex;
   align-items: center;
+}
+.room-id {
+    color: white;
 }
 </style>

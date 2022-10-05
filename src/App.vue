@@ -31,12 +31,13 @@
 </template>
 
 <script setup lang="ts">
+import { inject, onMounted, Ref, ref, watch, provide } from 'vue';
 import RoomConnect from './components/RoomConnect.vue';
 import Chat from './components/Chat.vue';
 import PermissionView from './components/PermissionView.vue';
 import { useVideoStore } from './stores/videoStore';
-import { useSocketStore } from "./stores/socketStore";
-import { inject, onMounted, Ref, ref, watch, provide } from 'vue';
+import { useSocketStore } from './stores/socketStore';
+import { DEFAULT_FONT_SIZE } from './utils/const_variables';
 
 const videoStore = useVideoStore();
 
@@ -68,7 +69,7 @@ socketStore.socket.streamingPlatform = inject('streamingPlatform');
 const changePermissionView = () => {
   showPermissionView.value = !showPermissionView.value;
 }
-const fontSize = ref('16px');
+const fontSize = ref(DEFAULT_FONT_SIZE);
 
 provide('fontSize', fontSize);
 </script>

@@ -53,7 +53,6 @@ const showPermissionView: Ref<boolean> = ref(false);
 
 const hideOrShowWidget = () => {
   showWidget.value = !showWidget.value;
-  console.log("isconnected", isConnected.value);
 }
 
 const joinRoomSuccess = (socketIsConnected : boolean) => {

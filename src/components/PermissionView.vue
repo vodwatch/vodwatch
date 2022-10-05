@@ -32,7 +32,6 @@ const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
 
 watch(permissions, (changedPermissions) => {
-  console.log(permissions);
   userPermissionsStore.usersPermissions = changedPermissions;
   socketStore.socket.setUsersPermissions(changedPermissions);
 }, { deep: true });

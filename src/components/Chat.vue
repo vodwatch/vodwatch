@@ -30,20 +30,25 @@
         </template>
       </Popper>
     </div>
-    <button @click="sendMessage">Send</button>
+    <div class="chat-bottom">
+        <button @click="sendMessage">Send</button>
+        <FontIcon @click="changeFontSize"/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
+import Popper from 'vue3-popper';
+import EmoteIcon from './EmoteIcon.vue';
+import FontIcon from './FontIcon.vue';
+import EmojiPicker from 'vue3-emoji-picker';
+import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import { useSocketStore } from '../stores/socketStore';
 import { Message } from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
-import EmojiPicker from 'vue3-emoji-picker';
-import '../../node_modules/vue3-emoji-picker/dist/style.css';
-import Popper from 'vue3-popper';
-import EmoteIcon from './EmoteIcon.vue';
+import { DEFAULT_FONT_SIZE, INCREASED_FONT_SIZE } from '../utils/const_variables';
 
 const props = defineProps({
     isDev: {type: Boolean, required: false},
@@ -85,6 +90,17 @@ const onSelectEmoji = (emote) => {
   messageText.value += emote.i;
 }
 
+const fontSize = inject('fontSize') as Ref<string>;
+
+const changeFontSize = () => {
+  if (fontSize.value === DEFAULT_FONT_SIZE) {
+    fontSize.value = INCREASED_FONT_SIZE;
+  }
+  else {
+    fontSize.value = DEFAULT_FONT_SIZE;
+  }
+}
+
 onMounted( () => {
     if (props.isDev) messages.value = [
         {
@@ -100,7 +116,6 @@ onMounted( () => {
             content: "It's me",
         }
     ];
-    console.log(messages.value);
 })
 </script>
 
@@ -154,5 +169,9 @@ onMounted( () => {
 }
 .message-input {
   resize:none;
+}
+.chat-bottom {
+  display: flex;
+  align-items: center;
 }
 </style>

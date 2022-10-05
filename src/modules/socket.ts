@@ -166,7 +166,7 @@ export class ClientSocketHandler {
                 SocketEventType.SEND_MESSAGE,
                 message,
                 (response: string) => {
-                    if (response === "ROOM_NOT_FOUND") {
+                    if (response === "ROOM_NOT_FOUND" || response === "OPERATION_NOT_ALLOWED") {
                         reject(response);
                     }
 

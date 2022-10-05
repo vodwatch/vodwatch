@@ -4,6 +4,7 @@
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
+    "jsx": "preserve",
     "sourceMap": true,
     "rootDirs": ["src"],
     "outDir": "dist/js",

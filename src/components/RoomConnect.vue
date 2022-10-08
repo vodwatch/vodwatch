@@ -37,6 +37,7 @@ const joinRoom = () => {
     try {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
+      socketStore.socket.roomId = roomId.value;
       emit('joinRoomSuccess', true);
       console.log("joined the room!");
 
@@ -60,6 +61,7 @@ const createRoom = () => {
     try {
       roomId.value = await socketStore.socket.createRoom();
       createRoomFailed.value = false;
+      socketStore.socket.roomId = roomId.value;
       emit('joinRoomSuccess', true);
       console.log(roomId.value);
     }

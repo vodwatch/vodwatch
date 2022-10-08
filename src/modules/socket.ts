@@ -26,6 +26,7 @@ export class ClientSocketHandler {
     private chatMessages!: Message[];
     private eventSemaphore: boolean = false;
     public streamingPlatform?: string;
+    public roomId?: string;
     private userPermissionsStore = useUsersPermissionsStore();
     supposedCurrentTime: number = 0;
 
@@ -337,6 +338,10 @@ export class ClientSocketHandler {
                 }
             );
         });
+    }
+
+    getMyId = () => {
+        return this.socket.id;
     }
 
     closeConnection = () => {

@@ -1,6 +1,10 @@
 <template>
   <div class="chat-container">
-    <div class="room-id">ROOM ID: ABCDE</div>
+    <div 
+      class="room-id"
+      v-if="isRoomId">
+      ROOM ID: {{ socketStore.socket.roomId }}
+    </div>
     <div class="chat-content">
       <div v-for="message of reversedMessages" :class="[
             'chat-message',
@@ -22,9 +26,10 @@
           class="message-input"
           type="text"
           v-model="messageText"
+          :disabled="!myPermissions.chat"
           @keyup.enter="sendMessage">
       </textarea>
-      <Popper>
+      <Popper v-if="myPermissions.chat">
         <EmoteIcon/>
         <template #content>
           <EmojiPicker @select="onSelectEmoji" />
@@ -34,7 +39,8 @@
     <div class="chat-bottom">
         <button
             @click="sendMessage"
-            :disabled="myPermissions">
+            :disabled="!myPermissions.chat"
+            >
             Send
         </button>
         <FontIcon @click="changeFontSize"/>
@@ -46,7 +52,7 @@
 import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
-import {Message, UserPermissions} from '../modules/interfaces/interfaces';
+import {Message, UserPermissions, Permissions} from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
@@ -54,6 +60,7 @@ import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
 import FontIcon from './FontIcon.vue';
 import {useUsersPermissionsStore} from "../stores/usersPermissionsStore";
+import { DEFAULT_FONT_SIZE, INCREASED_FONT_SIZE } from '../utils/const_variables';
 
 const props = defineProps({
     isDev: {type: Boolean, required: false},
@@ -72,11 +79,13 @@ const reversedMessages = computed(() => {
   return output;
 })
 
+const isRoomId = computed(() => socketStore.socket.roomId !== "");
+
 const messageText: Ref<string> = ref('');
 
 const sendMessage = () => {
 
-  if (messageText.value !== '') {
+  if (messageText.value !== '' && !(myPermissions.value.chat)) {
     messages.value.push({
       from: 'me',
       content: messageText.value,
@@ -108,7 +117,7 @@ const changeFontSize = () => {
 
 const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
-const myPermissions = computed(() => permissions ); //TODO: implement logic with getting own username
+const myPermissions = computed<Permissions>(() => permissions.value[socketStore.socket.getMyId()].permissions); 
 
 onMounted( () => {
     if (props.isDev) messages.value = [

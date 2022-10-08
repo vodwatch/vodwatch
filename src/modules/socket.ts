@@ -356,6 +356,12 @@ export class ClientSocketHandler {
         this.chatMessages = chatMessages;
     }
 
+    getVideo = () => this.video;
+
+    getRoomId = () => this.roomId;
+
+    getMessages = () => this.chatMessages;
+
     private checkForErrors = () => {
         if (!this.socket) throw new Error("Socket is not initialized");
         if (!this.socket.connected) throw new Error("Socket is not connected");

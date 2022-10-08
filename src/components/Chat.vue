@@ -98,11 +98,11 @@ const onSelectEmoji = (emote) => {
 const fontSize = inject('fontSize') as Ref<string>;
 
 const changeFontSize = () => {
-  if (fontSize.value === '16px') {
-    fontSize.value = '20px';
+  if (fontSize.value === DEFAULT_FONT_SIZE) {
+    fontSize.value = INCREASED_FONT_SIZE;
   }
   else {
-    fontSize.value = '16px';
+    fontSize.value = DEFAULT_FONT_SIZE;
   }
 }
 

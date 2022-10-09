@@ -78,7 +78,7 @@ provide('fontSize', fontSize);
     font-size: v-bind(fontSize);
   }
   #app {
-    position:absolute;
+    position: fixed;
     top: 1vh;
     right: 2vw;
     width: 15vw;

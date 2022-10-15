@@ -358,8 +358,6 @@ export class ClientSocketHandler {
 
     getVideo = () => this.video;
 
-    getRoomId = () => this.roomId;
-
     getMessages = () => this.chatMessages;
 
     private checkForErrors = () => {

@@ -32,6 +32,7 @@
     "socket.io-client": "^4.5.0",
     "style-loader": "^3.3.1",
     "ts-jest": "^28.0.2",
+    "@vue/vue3-jest": "^28.0.0",
     "ts-loader": "^9.2.8",
     "typescript": "^4.7.4",
     "vue-loader": "^17.0.0",

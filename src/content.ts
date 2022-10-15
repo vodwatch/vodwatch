@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
 });
 
-function createVueApp() {
+export function createVueApp() {
     const body = document.querySelector('body');
     const mountElement = document.createElement('div');
     mountElement.className = 'mount-element'

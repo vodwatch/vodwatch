@@ -47,7 +47,7 @@ onMounted(() => {
 
 const socketStore = useSocketStore();  
 const showWidget: Ref<boolean> = ref(true);
-const isConnected: Ref<boolean> = ref(useSocketStore().socket.isConnected());
+const isConnected: Ref<boolean> = ref(false);
 const isDev: Ref<boolean> = ref(false);
 const showPermissionView: Ref<boolean> = ref(false);
 
@@ -60,7 +60,10 @@ const joinRoomSuccess = (socketIsConnected : boolean) => {
 }
 
 watch(useSocketStore().socket, (changedIsConnected) => {
-  isConnected.value = changedIsConnected.isConnected();
+  if(!changedIsConnected.isConnected()) {
+    isConnected.value = false;
+  }
+
 }, {deep: true})
 
 socketStore.socket.streamingPlatform = inject('streamingPlatform');

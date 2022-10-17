@@ -85,7 +85,7 @@ const messageText: Ref<string> = ref('');
 
 const sendMessage = () => {
 
-  if (messageText.value !== '' && !(myPermissions.value.chat)) {
+  if (messageText.value !== '' && myPermissions.value.chat) {
     messages.value.push({
       from: 'me',
       content: messageText.value,

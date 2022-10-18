@@ -27,6 +27,7 @@ let createRoomFailed: Ref<boolean> = ref(false);
 const initSocket = () => {
   const video = videoStore.videoHandler.getVideo();
   socketStore.socket.setVideo(video);
+  messageStore.messages = [];
   socketStore.socket.setChatMessages(messageStore.messages);
   videoStore.videoHandler.setSocketHandler(socketStore.socket);
 };

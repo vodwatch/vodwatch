@@ -23,29 +23,12 @@ switch(true) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.text === "on video" && request.streamingPlatform !== undefined) {
         streamingPlatform = request.streamingPlatform;
+        createVueApp();
     }
+
+    sendResponse({});
+    return true;
 });
-// const substring = "https://www.netflix.com/watch";
-// let netflixVideoTitle;
-
-// if (document.location.href.includes(substring)) {
-//     var loadSemaphore = true;
-//     setTimeout(() => {
-//         netflixVideoTitle = document.getElementsByClassName('ltr-er76rf')[0].innerHTML;
-//         createVueApp();
-//         loadSemaphore = false;
-//     }, 5000);
-// }
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//     if (request.text === "on video") {
-//         netflixVideoTitle = request.videoTitle;
-//         createVueApp();
-//     }
-
-//     sendResponse({});
-//     return true;
-// });
 
 function createVueApp() {
     const body = document.querySelector('body');

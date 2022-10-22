@@ -26,7 +26,7 @@ export class ClientSocketHandler {
     private chatMessages!: Message[];
     private eventSemaphore: boolean = false;
     private streamingPlatform?: undefined | string;
-    private videoId?: string;
+    private videoTitle?: string;
     public roomId?: string;
     private userPermissionsStore = useUsersPermissionsStore();
     supposedCurrentTime: number = 0;
@@ -52,7 +52,7 @@ export class ClientSocketHandler {
                                     netflixSeek(message.currentTime);
                                     break;
                                 case STREAMING_PLATFORM.hboMax:
-                                    console.log("HBO Max video is seeked!");
+                                    this.video.currentTime = message.currentTime;
                                     break;
                                 case STREAMING_PLATFORM.youTube:
                                     youTubeSeek(message.currentTime);
@@ -68,7 +68,7 @@ export class ClientSocketHandler {
                                 netflixPlay();
                                 break;
                             case STREAMING_PLATFORM.hboMax:
-                                console.log("HBO Max video is played!");
+                                this.video.play();
                                 break;
                             case STREAMING_PLATFORM.youTube:
                                 youTubePlay();
@@ -84,7 +84,7 @@ export class ClientSocketHandler {
                                 netflixPause();
                                 break;
                             case STREAMING_PLATFORM.hboMax:
-                                console.log("HBO Max video is paused!");
+                                this.video.pause();
                                 break;
                             case STREAMING_PLATFORM.youTube:
                                 youTubePause();
@@ -100,7 +100,7 @@ export class ClientSocketHandler {
                                 netflixSeek(message.currentTime);
                                 break;
                             case STREAMING_PLATFORM.hboMax:
-                                console.log("HBO Max video is seeked!");
+                                this.video.currentTime = message.currentTime;
                                 break;
                             case STREAMING_PLATFORM.youTube:
                                 youTubeSeek(message.currentTime)
@@ -167,7 +167,7 @@ export class ClientSocketHandler {
                             netflixPlay();
                             break;
                         case STREAMING_PLATFORM.hboMax:
-                            console.log("HBO Max video is played!");
+                            this.video.play();
                             break;
                         case STREAMING_PLATFORM.youTube:
                             youTubePlay();
@@ -183,7 +183,7 @@ export class ClientSocketHandler {
                             netflixPause();
                             break;
                         case STREAMING_PLATFORM.hboMax:
-                            console.log("HBO Max video is paused!");
+                            this.video.pause();
                             break;
                         case STREAMING_PLATFORM.youTube:
                             youTubePause();
@@ -199,7 +199,7 @@ export class ClientSocketHandler {
                             netflixSeek(this.supposedCurrentTime);
                             break;
                         case STREAMING_PLATFORM.hboMax:
-                            console.log("HBO Max video is seeked!");
+                            this.video.currentTime = this.supposedCurrentTime;
                             break;
                         case STREAMING_PLATFORM.youTube:
                             youTubeSeek(this.supposedCurrentTime);
@@ -225,13 +225,12 @@ export class ClientSocketHandler {
 
     joinRoom = (roomId: string) => {
         this.checkForErrors();
-
         return new Promise((resolve, reject) => {
             this.socket.emit(
                 SocketEventType.JOIN_ROOM,
                 roomId,
                 this.streamingPlatform,
-                this.videoId,
+                this.getVideoTitle(),
                 (response: string) => {
                     if (response === "ROOM_NOT_FOUND") {
                         reject(response);
@@ -249,7 +248,7 @@ export class ClientSocketHandler {
             this.socket.emit(
                 SocketEventType.CREATE_ROOM,
                 this.streamingPlatform,
-                this.videoId,
+                this.getVideoTitle(),
                 (response: string) => {
                     if (response === "ROOM_ALREADY_EXISTS") {
                         reject(response);
@@ -297,6 +296,23 @@ export class ClientSocketHandler {
                 }
             );
         });
+    }
+
+    getVideoTitle = () => {
+        switch(this.streamingPlatform) {
+            case STREAMING_PLATFORM.netflix:
+                return document.getElementsByClassName('ltr-er76rf')[0].innerHTML;
+            case STREAMING_PLATFORM.hboMax:
+                return document.getElementsByClassName('css-1rynq56 r-k200y')[0].innerHTML;
+            case STREAMING_PLATFORM.youTube:
+                break;
+            case STREAMING_PLATFORM.disneyPlus:
+                break;
+            case STREAMING_PLATFORM.amazonPrimeVideo:
+                break;
+            default:
+                break;
+        }
     }
 
     getMyId = () => {

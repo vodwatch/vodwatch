@@ -8,61 +8,72 @@
 </template>
 
 <script setup lang="ts">
-import { v4 as uuid } from 'uuid';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from "../stores/videoStore";
 import { useSocketStore } from '../stores/socketStore';
+import { useMessageStore } from '../stores/messageStore';
 
+const props = defineProps({
+  isDev: { type: Boolean, required: false },
+});
+const emit = defineEmits(['joinRoomSuccess']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
+const messageStore = useMessageStore();
 let roomId: Ref<string> = ref('');
+let createRoomFailed: Ref<boolean> = ref(false);
+
+const initSocket = () => {
+  const video = videoStore.videoHandler.getVideo();
+  socketStore.socket.setVideo(video);
+  messageStore.messages = [];
+  socketStore.socket.setChatMessages(messageStore.messages);
+  videoStore.videoHandler.setSocketHandler(socketStore.socket);
+};
 
 const joinRoom = () => {
   socketStore.socket.openConnection(async () => {
-    const video = videoStore.videoHandler.getVideo();
-    socketStore.socket.setVideo(video);
-    videoStore.videoHandler.setSocketHandler(socketStore.socket);
+    initSocket();
     try {
       await socketStore.socket.joinRoom(roomId.value);
       createRoomFailed.value = false;
+      socketStore.socket.roomId = roomId.value;
+      emit('joinRoomSuccess', true);
+      console.log("joined the room!");
+
     }
     catch {
       createRoomFailed.value = true;
+      emit('joinRoomSuccess', false);
+      console.log("join room failed!");
     }
   });
-  if (socketStore.socket.isConnected()){
-      createRoomFailed.value = false;
-      return;
-  }
-  createRoomFailed.value = true;
-  emit('mockSocket', true);
-}
-let createRoomFailed: Ref<boolean> = ref(false);
+};
 
 const createRoom = () => {
+   if (props.isDev) {
+    emit('joinRoomSuccess', true);
+    return;
+   }
+
   socketStore.socket.openConnection(async () => {
-    const video = videoStore.videoHandler.getVideo();
-    socketStore.socket.setVideo(video);
-    videoStore.videoHandler.setSocketHandler(socketStore.socket);
-    roomId.value = uuid();
+    initSocket();
     try {
-      await socketStore.socket.createRoom(roomId.value);
+      roomId.value = await socketStore.socket.createRoom();
       createRoomFailed.value = false;
+      socketStore.socket.roomId = roomId.value;
+      emit('joinRoomSuccess', true);
+      console.log(roomId.value);
     }
     catch {
       createRoomFailed.value = true;
+      emit('joinRoomSuccess', false);
+      console.log("create room failed!");
     }
   });
-  if (socketStore.socket.isConnected()){
-    createRoomFailed.value = false;
-    return;
-  }
-  createRoomFailed.value = true;
-  emit('mockSocket', true);
 }
 
-const emit = defineEmits(['mockSocket']);
 </script>
 
 <style scoped>
@@ -76,6 +87,7 @@ const emit = defineEmits(['mockSocket']);
   height: 50vh;
   border-radius: 5px;
 }
+
 .failed {
   color: red;
 }

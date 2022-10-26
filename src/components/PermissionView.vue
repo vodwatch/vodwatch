@@ -1,6 +1,7 @@
 <template>
     <div class="permissions-container" >
         <header class="permissions-header">
+            <BackToChatButton class="go-back-to-chat-button" @goBackToChat="goBackToChat"/>
             <HideButton
                 class="header-hide-button"
                 @hideWidget="hideWidget"/>
@@ -24,6 +25,7 @@
 
 <script setup lang="ts">
 import HideButton from './HideButton.vue';
+import BackToChatButton from './BackToChatButton.vue';
 import { ref, watch, onMounted } from 'vue';
 import type { Ref } from 'vue';
 
@@ -35,7 +37,7 @@ const props = defineProps({
     isDev: {type: Boolean, required: false},
 });
 
-const emit = defineEmits(['hideWidget']);
+const emit = defineEmits(['hideWidget', 'goBackToChat']);
 
 const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
@@ -52,6 +54,10 @@ const kickUser = async (username: string) => {
 
 const hideWidget = () => {
     emit('hideWidget');
+}
+
+const goBackToChat = () => {
+    emit('goBackToChat');
 }
 
 onMounted(() => {
@@ -86,28 +92,38 @@ onMounted(() => {
 
 <style scoped>
     .permissions-container {
-        height: 55vh;
+        height: 60vh;
         border-radius: 5px;
-        width: 15vw;
+        width: 20vw;
         background-color: black;
         color: white;
     }
 
     .permissions-header {
         display: flex;
-        justify-content: right;
+        justify-content: space-around;
         align-items: center;
         height: 5vh;
     }
+
     .permissions-content {
-        width: 15vw;
-        height: 50vh;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 20vw;
+        height: 55vh;
     }
+
     .user-permissions {
         display: flex;
         gap: 0.25em
     }
+
     .header-hide-button {
-        padding-right: 1em;
+        padding-left: 5em;
+    }
+
+    .go-back-to-chat-button {
+        padding-right: 4em;
     }
 </style>

@@ -6,16 +6,8 @@
         <input type="checkbox" v-model="isDev">
         <div v-if="showWidget">
           <RoomConnect v-if="!isConnected" :is-dev="isDev" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
-          <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget"/>
-          <button
-            v-if="isConnected && !showPermissionView" @click="changePermissionView">
-            Manage Permissions
-          </button>
-          <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget"/>
-          <button
-            v-if="isConnected && showPermissionView" @click="changePermissionView">
-            Go back to chat
-          </button>
+          <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
+          <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
         </div>
         <div v-else class="minimized-widget" @click="hideOrShowWidget">
             V
@@ -81,8 +73,8 @@ provide('fontSize', fontSize);
 
   .app-position-when-opened {
     top: 1vh;
-    right: 2vw;
     width: 15vw;
+    left: 75vw;
   }
 
   .app-position-when-closed {

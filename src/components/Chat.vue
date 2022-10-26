@@ -13,7 +13,10 @@
         <div v-if="copied" class="copied-message">
             Copied!
         </div>
-        <HideButton class="header-hide-button" @hideWidget="hideWidget"/>
+        <div class="navigation-buttons">
+            <GoToPermissionsButton @goToPermissions="goToPermissions"/>
+            <HideButton class="header-hide-button" @hideWidget="hideWidget"/>
+        </div>
     </header>
     <div class="chat-content">
       <div v-for="message of reversedMessages" :class="[
@@ -60,6 +63,7 @@
 
 <script setup lang="ts">
 import HideButton from './HideButton.vue';
+import GoToPermissionsButton from './GoToPermissionsButton.vue';
 import ClipboardIcon from './ClipboardIcon.vue';
 import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
@@ -79,7 +83,7 @@ const props = defineProps({
     isDev: {type: Boolean, required: false},
 });
 
-const emit = defineEmits(['hideWidget']);
+const emit = defineEmits(['hideWidget', 'goToPermissions']);
 
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();
@@ -138,6 +142,9 @@ const hideWidget = () => {
     emit('hideWidget');
 }
 
+const goToPermissions = () => {
+    emit('goToPermissions');
+}
 
 const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
@@ -179,7 +186,8 @@ onMounted( () => {
         color: black;
         font-size: 2em;
         background-color: black;
-        max-height: 55vh;
+        max-height: 70vh;
+        width: 20vw;
         border-radius: 5px;
         box-shadow:  2.8px 2.2px rgba(0, 0, 0, 0.034),
         0 6.7px 5.3px rgba(0, 0, 0, 0.048),
@@ -194,7 +202,7 @@ onMounted( () => {
         flex-direction: column-reverse;
         gap: 1em;
         background-color: white;
-        height: 40vh;
+        height: 50vh;
         overflow: scroll;
         border-radius: 5px;
     }
@@ -239,6 +247,7 @@ onMounted( () => {
     .chat-bottom {
         display: flex;
         align-items: center;
+        height: 10vh;
     }
 
     .room-id {
@@ -247,7 +256,9 @@ onMounted( () => {
         color: white;
     }
 
-    .header-hide-button {
+    .navigation-buttons {
+        display: flex;
+        gap: 3px;
         padding-left: v-bind(minimizeButtonPadding);
     }
 

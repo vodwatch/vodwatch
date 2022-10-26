@@ -1,21 +1,29 @@
 <template>
-  <div class="permissions-container" >
-    <div v-for="(permission, username) in permissions" :key="username" class="user-permissions">
-      {{username}}
-      <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
-      <label for="vod-control">VOD control:</label>
-
-      <input type="checkbox" id="chat" v-model="permission.permissions.chat">
-      <label for="chat">Chat:</label>
-
-      <input type="checkbox" id="kick" v-model="permission.permissions.kick">
-      <label for="kick">Kick:</label>
-        <button @click="kickUser(String(username))"> Kick </button>
+    <div class="permissions-container" >
+        <header class="permissions-header">
+            <HideButton
+                class="header-hide-button"
+                @hideWidget="hideWidget"/>
+        </header>
+        <div class="permissions-content">
+            <div v-for="(permission, username) in permissions" :key="username">
+                <div>{{username}}</div>
+                <div class="user-permissions">
+                    <label for="vod-control">VOD control:</label>
+                    <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
+                    <label for="chat">Chat:</label>
+                    <input type="checkbox" id="chat" v-model="permission.permissions.chat">
+                    <label for="kick">Kick:</label>
+                    <input type="checkbox" id="kick" v-model="permission.permissions.kick">
+                    <button @click="kickUser(String(username))"> X </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
+import HideButton from './HideButton.vue';
 import { ref, watch, onMounted } from 'vue';
 import type { Ref } from 'vue';
 
@@ -26,6 +34,8 @@ import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 const props = defineProps({
     isDev: {type: Boolean, required: false},
 });
+
+const emit = defineEmits(['hideWidget']);
 
 const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
@@ -38,6 +48,10 @@ watch(permissions, (changedPermissions) => {
 
 const kickUser = async (username: string) => {
     await socketStore.socket.kickUser(username);
+}
+
+const hideWidget = () => {
+    emit('hideWidget');
 }
 
 onMounted(() => {
@@ -71,14 +85,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.permissions-container {
-  height: 50vh;
-  border-radius: 5px;
-  width: 15vw;
-}
+    .permissions-container {
+        height: 55vh;
+        border-radius: 5px;
+        width: 15vw;
+        background-color: black;
+        color: white;
+    }
 
-.user-permissions {
-  display: flex;
-  gap: 1em
-}
+    .permissions-header {
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        height: 5vh;
+    }
+    .permissions-content {
+        width: 15vw;
+        height: 50vh;
+    }
+    .user-permissions {
+        display: flex;
+        gap: 0.25em
+    }
+    .header-hide-button {
+        padding-right: 1em;
+    }
 </style>

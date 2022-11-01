@@ -1,21 +1,31 @@
 <template>
-  <div class="permissions-container" >
-    <div v-for="(permission, username) in permissions" :key="username" class="user-permissions">
-      {{username}}
-      <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
-      <label for="vod-control">VOD control:</label>
-
-      <input type="checkbox" id="chat" v-model="permission.permissions.chat">
-      <label for="chat">Chat:</label>
-
-      <input type="checkbox" id="kick" v-model="permission.permissions.kick">
-      <label for="kick">Kick:</label>
-        <button @click="kickUser(String(username))"> Kick </button>
+    <div class="permissions-container" >
+        <header class="permissions-header">
+            <BackToChatButton class="go-back-to-chat-button" @goBackToChat="goBackToChat"/>
+            <HideButton
+                class="header-hide-button"
+                @hideWidget="hideWidget"/>
+        </header>
+        <div class="permissions-content">
+            <div v-for="(permission, username) in permissions" :key="username">
+                <div>{{username}}</div>
+                <div class="user-permissions">
+                    <label for="vod-control">VOD control:</label>
+                    <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
+                    <label for="chat">Chat:</label>
+                    <input type="checkbox" id="chat" v-model="permission.permissions.chat">
+                    <label for="kick">Kick:</label>
+                    <input type="checkbox" id="kick" v-model="permission.permissions.kick">
+                    <button @click="kickUser(String(username))"> X </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
+import HideButton from './HideButton.vue';
+import BackToChatButton from './BackToChatButton.vue';
 import { ref, watch, onMounted } from 'vue';
 import type { Ref } from 'vue';
 
@@ -26,6 +36,8 @@ import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 const props = defineProps({
     isDev: {type: Boolean, required: false},
 });
+
+const emit = defineEmits(['hideWidget', 'goBackToChat']);
 
 const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
@@ -38,6 +50,14 @@ watch(permissions, (changedPermissions) => {
 
 const kickUser = async (username: string) => {
     await socketStore.socket.kickUser(username);
+}
+
+const hideWidget = () => {
+    emit('hideWidget');
+}
+
+const goBackToChat = () => {
+    emit('goBackToChat');
 }
 
 onMounted(() => {
@@ -71,14 +91,39 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.permissions-container {
-  height: 50vh;
-  border-radius: 5px;
-  width: 15vw;
-}
+    .permissions-container {
+        height: 60vh;
+        border-radius: 5px;
+        width: 20vw;
+        background-color: black;
+        color: white;
+    }
 
-.user-permissions {
-  display: flex;
-  gap: 1em
-}
+    .permissions-header {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 5vh;
+    }
+
+    .permissions-content {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 20vw;
+        height: 55vh;
+    }
+
+    .user-permissions {
+        display: flex;
+        gap: 0.25em
+    }
+
+    .header-hide-button {
+        padding-left: 5em;
+    }
+
+    .go-back-to-chat-button {
+        padding-right: 4em;
+    }
 </style>

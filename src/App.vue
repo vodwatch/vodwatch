@@ -3,9 +3,9 @@
         id="app"
         :class="showWidget ? 'app-position-when-opened' : 'app-position-when-closed'">
         <div v-if="showWidget">
-          <RoomConnect v-if="!isConnected" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
-          <Chat v-if="isConnected && !showPermissionView" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
-          <PermissionView v-if="isConnected && showPermissionView" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
+            <RoomConnect v-if="!isConnected" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
+            <Chat v-if="isConnected && !showPermissionView" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
+            <PermissionView v-if="isConnected && showPermissionView" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
         </div>
         <div v-else class="minimized-widget" @click="hideOrShowWidget">
             V
@@ -59,57 +59,102 @@ provide('fontSize', fontSize);
 </script>
 
 <style>
-  * {
-    font-size: v-bind(fontSize);
-  }
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
-  #app {
-    position: fixed;
-    z-index: 1000000;
-  }
+    * {
+        font-size: v-bind(fontSize);
+    }
 
-  .app-position-when-opened {
-    top: 6vh;
-    width: 15vw;
-    left: 79vw;
-  }
+    #app {
+        position: fixed;
+        z-index: 1000000;
+    }
 
-  .app-position-when-closed {
-    top: 85vh;
-    right: 2vw;
-  }
+    .app-position-when-opened {
+        top: 6vh;
+        width: 15vw;
+        left: 79vw;
+    }
 
-  .minimized-widget {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      background-color: antiquewhite;
-      font-size: 35px;
-      height: 80px;
-      width: 80px;
-      cursor: pointer;
-      box-shadow:  2.8px 2.2px rgba(0, 0, 0, 0.034),
-      0 6.7px 5.3px rgba(0, 0, 0, 0.048),
-      0 6.5px 5px rgba(0, 0, 0, 0.06),
-      0 11.3px 10.9px rgba(0, 0, 0, 0.072),
-      0 20.8px 15.4px rgba(0, 0, 0, 0.086),
-      0 25px 20px rgba(0, 0, 0, 0.12);
-  }
+    .app-position-when-closed {
+        top: 90vh;
+        right: 4vw;
+    }
 
-  .minimized-widget:hover {
-      background-color: #E8D9C6FF;
-  }
-  .minimized-widget, .minimized-widget:hover {
-      transition: background 0.1s ease-out 0s, box-shadow 0.15s cubic-bezier(0.47, 0.03, 0.49, 1.38) 0s;
-  }
+    .minimized-widget {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Fredoka One',serif;
+        border-radius: 50%;
+        background-color: antiquewhite;
+        font-size: 20px;
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+        box-shadow:  1.8px 1.2px rgba(0, 0, 0, 0.034),
+        0 3.7px 2.3px rgba(0, 0, 0, 0.048),
+        0 3.5px 2px rgba(0, 0, 0, 0.06),
+        0 5.3px 5.9px rgba(0, 0, 0, 0.072),
+        0 10.8px 7.4px rgba(0, 0, 0, 0.086),
+        0 12.5px 10px rgba(0, 0, 0, 0.12);
+        animation: leaveHoverOnMinimizedWidget 1s;
+    }
 
-  a:link, a:visited {
-    color: white;
-    cursor: pointer;
-  }
+    .minimized-widget:hover {
+        height: 80px;
+        width: 80px;
+        font-size: 35px;
+        margin-right: -20px !important;
+        margin-top: -20px !important;
+        box-shadow:  2.8px 2.2px rgba(0, 0, 0, 0.034),
+        0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+        0 6.5px 5px rgba(0, 0, 0, 0.06),
+        0 11.3px 10.9px rgba(0, 0, 0, 0.072),
+        0 20.8px 15.4px rgba(0, 0, 0, 0.086),
+        0 25px 20px rgba(0, 0, 0, 0.12);
+        animation: hoverOnMinimizedWidget 1s;
+    }
 
-  a:link:active, a:visited:active {
-    color: mediumpurple;
-  }
+    @keyframes leaveHoverOnMinimizedWidget {
+        0% {
+          transform: scale(2);
+        }
+        30% {
+          transform: scale(0.25);
+        }
+        50% {
+            transform: scale(1.3);
+        }
+        70% {
+            transform: scale(0.7);
+        }
+        90% {
+            transform: scale(1.3);
+        }
+        100% {
+          transform: scale(1);
+        }
+    }
+    @keyframes hoverOnMinimizedWidget {
+        0% {
+          transform: scale(0.5);
+        }
+        50% {
+          transform: scale(1.5);
+        }
+        100% {
+          transform: scale(1);
+        }
+    }
+
+
+    a:link, a:visited {
+        color: white;
+        cursor: pointer;
+    }
+
+    a:link:active, a:visited:active {
+        color: mediumpurple;
+    }
 </style>

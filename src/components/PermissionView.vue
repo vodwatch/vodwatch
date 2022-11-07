@@ -8,7 +8,8 @@
         </header>
         <div class="permissions-content">
             <div v-for="(permission, username) in permissions" :key="username">
-                <div>{{username}}</div>
+                <div class="username">{{username}} <KickButton @click="kickUser(String(username))" /></div>
+                User Permissions:
                 <div class="user-permissions">
                     <label for="vod-control">VOD control:</label>
                     <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
@@ -16,7 +17,6 @@
                     <input type="checkbox" id="chat" v-model="permission.permissions.chat">
                     <label for="kick">Kick:</label>
                     <input type="checkbox" id="kick" v-model="permission.permissions.kick">
-                    <button @click="kickUser(String(username))"> X </button>
                 </div>
             </div>
         </div>
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import HideButton from './buttons/HideButton.vue';
 import BackToChatButton from './buttons/BackToChatButton.vue';
+import KickButton from './buttons/KickButton.vue';
 import { ref, watch } from 'vue';
 import type { Ref } from 'vue';
 
@@ -92,5 +93,11 @@ const goBackToChat = () => {
 
     .go-back-to-chat-button {
         padding-right: 4em;
+    }
+
+    .username {
+        display: flex;
+        align-items: center;
+        gap: 3px;
     }
 </style>

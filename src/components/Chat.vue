@@ -62,10 +62,10 @@
 </template>
 
 <script setup lang="ts">
-import HideButton from './HideButton.vue';
-import GoToPermissionsButton from './GoToPermissionsButton.vue';
-import ClipboardIcon from './ClipboardIcon.vue';
-import { ref, computed, onMounted, inject } from 'vue';
+import HideButton from './buttons/HideButton.vue';
+import GoToPermissionsButton from './buttons/GoToPermissionsButton.vue';
+import ClipboardIcon from './icons/ClipboardIcon.vue';
+import { ref, computed, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
 import { Message, UserPermissions, Permissions } from '../modules/interfaces/interfaces';
@@ -73,15 +73,11 @@ import { useMessageStore } from '../stores/messageStore';
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
-import EmoteIcon from './EmoteIcon.vue';
-import FontIcon from './FontIcon.vue';
+import EmoteIcon from './icons/EmoteIcon.vue';
+import FontIcon from './icons/FontIcon.vue';
 import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 import { DEFAULT_FONT_SIZE, INCREASED_FONT_SIZE } from '../utils/const_variables';
 import { useClipboard } from '@vueuse/core';
-
-const props = defineProps({
-    isDev: {type: Boolean, required: false},
-});
 
 const emit = defineEmits(['hideWidget', 'goToPermissions']);
 
@@ -150,23 +146,6 @@ const goToPermissions = () => {
 const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
 const myPermissions = computed<Permissions>(() => permissions.value[socketStore.socket.getMyId()].permissions);
-
-onMounted( () => {
-    if (props.isDev) messages.value = [
-        {
-            from: 'a',
-            content: 'Hello',
-        },
-        {
-            from: 'b',
-            content: 'Hi again'
-        },
-        {
-            from: 'me',
-            content: "It's me",
-        }
-    ];
-})
 </script>
 
 <style scoped>
@@ -246,7 +225,7 @@ onMounted( () => {
     .message-content {
         display:inline-block;
         overflow-wrap: break-word;
-        font-size: 20px;
+        font-size: 1.4em;
         width: 15vw;
         padding: 0 5px 0 5px
     }

@@ -24,18 +24,14 @@
 </template>
 
 <script setup lang="ts">
-import HideButton from './HideButton.vue';
-import BackToChatButton from './BackToChatButton.vue';
-import { ref, watch, onMounted } from 'vue';
+import HideButton from './buttons/HideButton.vue';
+import BackToChatButton from './buttons/BackToChatButton.vue';
+import { ref, watch } from 'vue';
 import type { Ref } from 'vue';
 
 import type { UserPermissions } from "../modules/interfaces/interfaces";
 import { useSocketStore } from '../stores/socketStore';
 import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
-
-const props = defineProps({
-    isDev: {type: Boolean, required: false},
-});
 
 const emit = defineEmits(['hideWidget', 'goBackToChat']);
 
@@ -59,35 +55,6 @@ const hideWidget = () => {
 const goBackToChat = () => {
     emit('goBackToChat');
 }
-
-onMounted(() => {
-    if (props.isDev) permissions.value = [
-        {
-            username: 'a',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        },
-        {
-            username: 'b',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        },
-        {
-            username: 'me',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        }
-    ];
-})
 </script>
 
 <style scoped>

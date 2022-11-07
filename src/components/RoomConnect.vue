@@ -15,16 +15,13 @@
 </template>
 
 <script setup lang="ts">
-import HideButton from './HideButton.vue';
+import HideButton from './buttons/HideButton.vue';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from '../stores/videoStore';
 import { useSocketStore } from '../stores/socketStore';
 import { useMessageStore } from '../stores/messageStore';
 
-const props = defineProps({
-  isDev: { type: Boolean, required: false },
-});
 const emit = defineEmits(['joinRoomSuccess', 'hideWidget']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
@@ -60,11 +57,6 @@ const joinRoom = () => {
 };
 
 const createRoom = () => {
-   if (props.isDev) {
-    emit('joinRoomSuccess', true);
-    return;
-   }
-
   socketStore.socket.openConnection(async () => {
     initSocket();
     try {
@@ -72,7 +64,6 @@ const createRoom = () => {
       createRoomFailed.value = false;
       socketStore.socket.roomId = roomId.value;
       emit('joinRoomSuccess', true);
-      console.log(roomId.value);
     }
     catch {
       createRoomFailed.value = true;

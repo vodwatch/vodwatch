@@ -2,12 +2,10 @@
     <div
         id="app"
         :class="showWidget ? 'app-position-when-opened' : 'app-position-when-closed'">
-        <label>Dev</label>
-        <input type="checkbox" v-model="isDev">
         <div v-if="showWidget">
-          <RoomConnect v-if="!isConnected" :is-dev="isDev" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
-          <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
-          <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
+          <RoomConnect v-if="!isConnected" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
+          <Chat v-if="isConnected && !showPermissionView" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
+          <PermissionView v-if="isConnected && showPermissionView" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
         </div>
         <div v-else class="minimized-widget" @click="hideOrShowWidget">
             V
@@ -31,9 +29,8 @@ onMounted(() => {
 })
 
 const socketStore = useSocketStore();
-const showWidget: Ref<boolean> = ref(true);
+const showWidget: Ref<boolean> = ref(false);
 const isConnected: Ref<boolean> = ref(false);
-const isDev: Ref<boolean> = ref(false);
 const showPermissionView: Ref<boolean> = ref(false);
 
 const hideOrShowWidget = () => {
@@ -72,9 +69,9 @@ provide('fontSize', fontSize);
   }
 
   .app-position-when-opened {
-    top: 1vh;
+    top: 6vh;
     width: 15vw;
-    left: 75vw;
+    left: 79vw;
   }
 
   .app-position-when-closed {

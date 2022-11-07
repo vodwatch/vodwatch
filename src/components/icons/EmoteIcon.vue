@@ -13,6 +13,6 @@ export default {
     filter: invert(99%) sepia(7%) saturate(11%) hue-rotate(306deg) brightness(120%) contrast(100%);
   }
   .svg-color:hover {
-    filter: invert(100%) sepia(2%) saturate(2105%) hue-rotate(301deg) brightness(90%) contrast(77%);
+    filter: invert(67%) sepia(48%) saturate(6265%) hue-rotate(224deg) brightness(91%) contrast(86%);
   }
 </style>

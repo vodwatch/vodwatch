@@ -63,7 +63,7 @@ const goBackToChat = () => {
         height: 60vh;
         border-radius: 5px;
         width: 20vw;
-        background-color: black;
+        background-color: #15202B;
         color: white;
     }
 

@@ -161,7 +161,7 @@ const myPermissions = computed<Permissions>(() => permissions.value[socketStore.
         font-weight: bold;
         color: black;
         font-size: 2em;
-        background-color: black;
+        background-color: #15202B;
         max-height: 70vh;
         width: 20vw;
         border-radius: 5px;

@@ -83,7 +83,7 @@ const hideWidget = () => {
 <style scoped>
     .room-connect {
         color: purple;
-        background-color: black;
+        background-color: #15202B;
         height: 60vh;
         width: 20vw;
         border-radius: 5px;
@@ -119,10 +119,16 @@ const hideWidget = () => {
         color: red;
     }
 
+    .room-id-input {
+        padding: 4px 8px 4px 8px;
+        font-size: 1.2em;
+        border-radius: 0.5em;
+    }
+
     .room-id-input:focus {
         outline: none !important;
         border: 2px solid mediumpurple;
-        border-radius: 5px;
+        border-radius: 0.5em;
         box-shadow: 0 0 10px antiquewhite;
     }
 </style>

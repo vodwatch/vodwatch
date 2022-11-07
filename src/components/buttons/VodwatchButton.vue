@@ -21,7 +21,6 @@
     }
 
     .vodwatch-button:hover {
-        box-shadow: 0 0 10px lightgray;
         background-color: #523FAD;
         color: white;
     }

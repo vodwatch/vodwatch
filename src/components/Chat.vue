@@ -42,7 +42,7 @@
           :disabled="!myPermissions.chat"
           @keyup.enter="sendMessage">
       </textarea>
-      <Popper v-if="myPermissions.chat">
+      <Popper v-if="myPermissions.chat" class="emote-icon">
         <EmoteIcon/>
         <template #content>
           <EmojiPicker @select="onSelectEmoji" />
@@ -50,13 +50,13 @@
       </Popper>
     </div>
     <div class="chat-bottom">
+        <FontIcon @click="changeFontSize"/>
         <button
+            class="send-message-button"
             @click="sendMessage"
-            :disabled="!myPermissions.chat"
-            >
+            :disabled="!myPermissions.chat">
             Send
         </button>
-        <FontIcon @click="changeFontSize"/>
     </div>
   </div>
 </template>
@@ -68,14 +68,14 @@ import ClipboardIcon from './ClipboardIcon.vue';
 import { ref, computed, onMounted, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useSocketStore } from '../stores/socketStore';
-import {Message, UserPermissions, Permissions} from '../modules/interfaces/interfaces';
+import { Message, UserPermissions, Permissions } from '../modules/interfaces/interfaces';
 import { useMessageStore } from '../stores/messageStore';
 import EmojiPicker from 'vue3-emoji-picker';
 import '../../node_modules/vue3-emoji-picker/dist/style.css';
 import Popper from 'vue3-popper';
 import EmoteIcon from './EmoteIcon.vue';
 import FontIcon from './FontIcon.vue';
-import {useUsersPermissionsStore} from '../stores/usersPermissionsStore';
+import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 import { DEFAULT_FONT_SIZE, INCREASED_FONT_SIZE } from '../utils/const_variables';
 import { useClipboard } from '@vueuse/core';
 
@@ -104,9 +104,10 @@ const isRoomId = computed(() => socketStore.socket.roomId !== "");
 
 const messageText: Ref<string> = ref('');
 
-const sendMessage = () => {
+const isMessageTextValidWhenEnter = computed(() => messageText.value.length !== 1 && messageText.value.charCodeAt(0) !== 10);
 
-  if (messageText.value !== '' && myPermissions.value.chat) {
+const sendMessage = () => {
+  if (messageText.value !== '' && myPermissions.value.chat && isMessageTextValidWhenEnter.value) {
     messages.value.push({
       from: 'me',
       content: messageText.value,
@@ -223,7 +224,7 @@ onMounted( () => {
     }
 
     .from {
-        font-size: 0.25em;
+        font-size: 0.65em;
         font-weight: normal;
     }
 
@@ -231,23 +232,65 @@ onMounted( () => {
         display:flex;
         justify-content: center;
         align-items: center;
+        margin-top: 5px;
+    }
+
+    .from-me > p {
+        text-align: right;
+    }
+
+    .from-outside > p {
+        text-align: left;
     }
 
     .message-content {
         display:inline-block;
         overflow-wrap: break-word;
-        max-width: 5vw;
+        font-size: 20px;
+        width: 15vw;
+        padding: 0 5px 0 5px
     }
 
-
     .message-input {
+        flex-grow: 1;
         resize:none;
+        margin: 0 15px 0 15px;
+        border-radius: 5px;
+        padding: 4px;
+    }
+
+    .message-input:focus {
+        outline: none !important;
+        border: 2px solid mediumpurple;
+        border-radius: 5px;
+        box-shadow: 0 0 10px antiquewhite;
+    }
+
+    .emote-icon {
+        margin: -12px -2px -12px -20px !important;
     }
 
     .chat-bottom {
         display: flex;
         align-items: center;
-        height: 10vh;
+        justify-content: flex-end;
+        gap: 7px;
+        height: 6vh;
+        margin-right: 7px;
+    }
+
+    .send-message-button {
+        all: unset;
+        cursor: pointer;
+        background-color: mediumpurple;
+        color: black;
+        font-weight: 500;
+        border-radius: 5px;
+        padding: 4px 6px 4px 6px;
+    }
+
+    .send-message-button:hover {
+        box-shadow: 0 0 10px lightgray;
     }
 
     .room-id {

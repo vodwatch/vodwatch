@@ -51,12 +51,7 @@
     </div>
     <div class="chat-bottom">
         <FontIcon @click="changeFontSize"/>
-        <button
-            class="send-message-button"
-            @click="sendMessage"
-            :disabled="!myPermissions.chat">
-            Send
-        </button>
+        <VodwatchButton @click="sendMessage" :disabled="!myPermissions.chat" :title="'Send'"/>
     </div>
   </div>
 </template>
@@ -64,6 +59,7 @@
 <script setup lang="ts">
 import HideButton from './buttons/HideButton.vue';
 import GoToPermissionsButton from './buttons/GoToPermissionsButton.vue';
+import VodwatchButton from './buttons/VodwatchButton.vue';
 import ClipboardIcon from './icons/ClipboardIcon.vue';
 import { ref, computed, inject } from 'vue';
 import type { Ref } from 'vue';
@@ -256,20 +252,6 @@ const myPermissions = computed<Permissions>(() => permissions.value[socketStore.
         gap: 7px;
         height: 6vh;
         margin-right: 7px;
-    }
-
-    .send-message-button {
-        all: unset;
-        cursor: pointer;
-        background-color: mediumpurple;
-        color: black;
-        font-weight: 500;
-        border-radius: 5px;
-        padding: 4px 6px 4px 6px;
-    }
-
-    .send-message-button:hover {
-        box-shadow: 0 0 10px lightgray;
     }
 
     .room-id {

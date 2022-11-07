@@ -6,9 +6,9 @@
                 @hideWidget="hideWidget"/>
         </header>
         <div class="room-connect-content">
-            <input type="text" v-model="roomId" placeholder="Enter room id ...">
-            <button @click="joinRoom"> Join Room </button>
-            <button @click="createRoom"> Create Room </button>
+            <input class="room-id-input" type="text" v-model="roomId" placeholder="Enter room id ...">
+            <VodwatchButton @click="joinRoom" :title="'Join Room'"/>
+            <VodwatchButton @click="createRoom" :title="'Create Room'"/>
             <span v-if="createRoomFailed" class="failed"> Failed to create a room. Try Again!</span>
         </div>
     </div>
@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import HideButton from './buttons/HideButton.vue';
+import VodwatchButton from './buttons/VodwatchButton.vue';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from '../stores/videoStore';
@@ -110,10 +111,18 @@ const hideWidget = () => {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        gap: 10px;
         height: 55vh;
     }
 
     .failed {
         color: red;
+    }
+
+    .room-id-input:focus {
+        outline: none !important;
+        border: 2px solid mediumpurple;
+        border-radius: 5px;
+        box-shadow: 0 0 10px antiquewhite;
     }
 </style>

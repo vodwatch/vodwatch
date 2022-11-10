@@ -27,6 +27,7 @@
 
     .vodwatch-button:disabled {
         background-color: darkgray;
+        color: black;
         cursor: not-allowed;
     }
 

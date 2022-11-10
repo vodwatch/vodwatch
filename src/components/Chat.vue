@@ -37,7 +37,6 @@
     <div class="message-input-container">
       <textarea
           class="message-input"
-          type="text"
           v-model="messageText"
           :disabled="!myPermissions.chat"
           @keyup.enter="sendMessage">
@@ -239,6 +238,10 @@ const myPermissions = computed<Permissions>(() => permissions.value[socketStore.
         border: 2px solid mediumpurple;
         border-radius: 5px;
         box-shadow: 0 0 10px antiquewhite;
+    }
+    
+    .message-input:disabled {
+        cursor: not-allowed;
     }
 
     .emote-icon {

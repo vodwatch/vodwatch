@@ -53,8 +53,11 @@ socketStore.socket.streamingPlatform = inject('streamingPlatform');
 const changePermissionView = () => {
   showPermissionView.value = !showPermissionView.value;
 }
-const fontSize = ref(DEFAULT_FONT_SIZE);
 
+const isAdmin = ref(false);
+provide('isAdmin', isAdmin);
+
+const fontSize = ref(DEFAULT_FONT_SIZE)
 provide('fontSize', fontSize);
 </script>
 

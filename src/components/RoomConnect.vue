@@ -6,7 +6,7 @@
                 @hideWidget="hideWidget"/>
         </header>
         <div class="room-connect-content">
-            <input type="text" v-model="roomId" class="room-id-input"  placeholder="Enter room id ..." maxlength="5">
+            <input class="room-id-input" type="text" v-model="roomId" placeholder="Enter room id ...">
             <VodwatchButton @click="joinRoom" :title="'Join Room'"/>
             <VodwatchButton @click="createRoom" :title="'Create Room'"/>
             <span v-if="createRoomFailed" class="failed"> Failed to create a room. Try Again!</span>
@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import HideButton from './buttons/HideButton.vue';
 import VodwatchButton from './buttons/VodwatchButton.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from '../stores/videoStore';
 import { useSocketStore } from '../stores/socketStore';
@@ -29,6 +29,7 @@ const socketStore = useSocketStore();
 const messageStore = useMessageStore();
 let roomId: Ref<string> = ref('');
 let createRoomFailed: Ref<boolean> = ref(false);
+const isAdmin = inject<Ref<boolean>>('isAdmin');
 
 watch(roomId, (newRoomId) => {
     roomId.value = newRoomId.toUpperCase();
@@ -50,6 +51,9 @@ const joinRoom = () => {
       createRoomFailed.value = false;
       socketStore.socket.roomId = roomId.value;
       emit('joinRoomSuccess', true);
+      if (isAdmin) {
+        isAdmin.value = false;
+      }
       console.log("joined the room!");
 
     }
@@ -68,6 +72,9 @@ const createRoom = () => {
       roomId.value = await socketStore.socket.createRoom();
       createRoomFailed.value = false;
       socketStore.socket.roomId = roomId.value;
+      if (isAdmin) {
+        isAdmin.value = true;
+      }
       emit('joinRoomSuccess', true);
     }
     catch {

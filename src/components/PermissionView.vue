@@ -11,7 +11,7 @@
                 <div class="username">{{username}} <KickButton @click="kickUser(String(username))" /></div>
                 User Permissions:
                 <div class="user-permissions">
-                    <label for="vod-control">VOD control:</label>
+                    <label for="vod-control">Video control:</label>
                     <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
                     <label for="chat">Chat:</label>
                     <input type="checkbox" id="chat" v-model="permission.permissions.chat">

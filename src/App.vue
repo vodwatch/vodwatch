@@ -100,7 +100,6 @@ provide('fontSize', fontSize);
         0 5.3px 5.9px rgba(0, 0, 0, 0.072),
         0 10.8px 7.4px rgba(0, 0, 0, 0.086),
         0 12.5px 10px rgba(0, 0, 0, 0.12);
-        animation: leaveHoverOnMinimizedWidget 1s;
     }
 
     .minimized-widget:hover {
@@ -118,26 +117,6 @@ provide('fontSize', fontSize);
         animation: hoverOnMinimizedWidget 1s;
     }
 
-    @keyframes leaveHoverOnMinimizedWidget {
-        0% {
-          transform: scale(2);
-        }
-        30% {
-          transform: scale(0.25);
-        }
-        50% {
-            transform: scale(1.3);
-        }
-        70% {
-            transform: scale(0.7);
-        }
-        90% {
-            transform: scale(1.3);
-        }
-        100% {
-          transform: scale(1);
-        }
-    }
     @keyframes hoverOnMinimizedWidget {
         0% {
           transform: scale(0.5);

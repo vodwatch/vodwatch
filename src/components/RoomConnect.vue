@@ -6,7 +6,7 @@
                 @hideWidget="hideWidget"/>
         </header>
         <div class="room-connect-content">
-            <input class="room-id-input" type="text" v-model="roomId" placeholder="Enter room id ...">
+            <input type="text" v-model="roomId" class="room-id-input"  placeholder="Enter room id ..." maxlength="5">
             <VodwatchButton @click="joinRoom" :title="'Join Room'"/>
             <VodwatchButton @click="createRoom" :title="'Create Room'"/>
             <span v-if="createRoomFailed" class="failed"> Failed to create a room. Try Again!</span>
@@ -123,6 +123,7 @@ const hideWidget = () => {
         padding: 4px 8px 4px 8px;
         font-size: 1.2em;
         border-radius: 0.5em;
+        text-align: center;
     }
 
     .room-id-input:focus {

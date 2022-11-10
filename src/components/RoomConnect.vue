@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import HideButton from './buttons/HideButton.vue';
 import VodwatchButton from './buttons/VodwatchButton.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from '../stores/videoStore';
 import { useSocketStore } from '../stores/socketStore';
@@ -29,6 +29,10 @@ const socketStore = useSocketStore();
 const messageStore = useMessageStore();
 let roomId: Ref<string> = ref('');
 let createRoomFailed: Ref<boolean> = ref(false);
+
+watch(roomId, (newRoomId) => {
+    roomId.value = newRoomId.toUpperCase();
+});
 
 const initSocket = () => {
   const video = videoStore.videoHandler.getVideo();

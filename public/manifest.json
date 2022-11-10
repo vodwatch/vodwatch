@@ -4,7 +4,7 @@
   "manifest_version": 3,
   "action": {
     "default_popup": "index.html",
-    "default_title": "Hello World"
+    "default_title": "Vodwatch"
   },
   "background": {
     "service_worker": "background.js"
@@ -12,11 +12,9 @@
   "permissions": ["tabs"],
   "content_scripts": [
     {
-      "matches": ["https://www.netflix.com/*", 
-          "https://www.youtube.com/*", 
-          "https://play.hbomax.com/*", 
-          "https://www.disneyplus.com/*",
-          "https://www.primevideo.com/*"],
+      "matches": ["https://www.netflix.com/*",
+          "https://www.youtube.com/*",
+          "https://play.hbomax.com/*"],
       "js": ["content.js"]
     }
   ]

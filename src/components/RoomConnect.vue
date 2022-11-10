@@ -6,31 +6,34 @@
                 @hideWidget="hideWidget"/>
         </header>
         <div class="room-connect-content">
-            <input type="text" v-model="roomId" placeholder="Enter room id ...">
-            <button @click="joinRoom"> Join Room </button>
-            <button @click="createRoom"> Create Room </button>
+            <input class="room-id-input" type="text" v-model="roomId" placeholder="Enter room id ...">
+            <VodwatchButton @click="joinRoom" :title="'Join Room'"/>
+            <VodwatchButton @click="createRoom" :title="'Create Room'"/>
             <span v-if="createRoomFailed" class="failed"> Failed to create a room. Try Again!</span>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import HideButton from './HideButton.vue';
-import { ref } from 'vue';
+import HideButton from './buttons/HideButton.vue';
+import VodwatchButton from './buttons/VodwatchButton.vue';
+import { ref, watch, inject } from 'vue';
 import type { Ref } from 'vue';
 import { useVideoStore } from '../stores/videoStore';
 import { useSocketStore } from '../stores/socketStore';
 import { useMessageStore } from '../stores/messageStore';
 
-const props = defineProps({
-  isDev: { type: Boolean, required: false },
-});
 const emit = defineEmits(['joinRoomSuccess', 'hideWidget']);
 const videoStore = useVideoStore();
 const socketStore = useSocketStore();
 const messageStore = useMessageStore();
 let roomId: Ref<string> = ref('');
 let createRoomFailed: Ref<boolean> = ref(false);
+const isAdmin = inject<Ref<boolean>>('isAdmin');
+
+watch(roomId, (newRoomId) => {
+    roomId.value = newRoomId.toUpperCase();
+});
 
 const initSocket = () => {
   const video = videoStore.videoHandler.getVideo();
@@ -48,6 +51,9 @@ const joinRoom = () => {
       createRoomFailed.value = false;
       socketStore.socket.roomId = roomId.value;
       emit('joinRoomSuccess', true);
+      if (isAdmin) {
+        isAdmin.value = false;
+      }
       console.log("joined the room!");
 
     }
@@ -60,19 +66,16 @@ const joinRoom = () => {
 };
 
 const createRoom = () => {
-   if (props.isDev) {
-    emit('joinRoomSuccess', true);
-    return;
-   }
-
   socketStore.socket.openConnection(async () => {
     initSocket();
     try {
       roomId.value = await socketStore.socket.createRoom();
       createRoomFailed.value = false;
       socketStore.socket.roomId = roomId.value;
+      if (isAdmin) {
+        isAdmin.value = true;
+      }
       emit('joinRoomSuccess', true);
-      console.log(roomId.value);
     }
     catch {
       createRoomFailed.value = true;
@@ -91,7 +94,7 @@ const hideWidget = () => {
 <style scoped>
     .room-connect {
         color: purple;
-        background-color: black;
+        background-color: #15202B;
         height: 60vh;
         width: 20vw;
         border-radius: 5px;
@@ -119,10 +122,25 @@ const hideWidget = () => {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        gap: 10px;
         height: 55vh;
     }
 
     .failed {
         color: red;
+    }
+
+    .room-id-input {
+        padding: 4px 8px 4px 8px;
+        font-size: 1.2em;
+        border-radius: 0.5em;
+        text-align: center;
+    }
+
+    .room-id-input:focus {
+        outline: none !important;
+        border: 2px solid mediumpurple;
+        border-radius: 0.5em;
+        box-shadow: 0 0 10px antiquewhite;
     }
 </style>

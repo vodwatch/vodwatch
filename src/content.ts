@@ -6,7 +6,7 @@ import { STREAMING_PLATFORM, STREAMING_PLATFORM_SUBSTRING } from './streamingPla
 let streamingPlatform: string;
 
 switch(true) {
-    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.netflixSubstring):  
+    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.netflixSubstring):
         streamingPlatform = STREAMING_PLATFORM.netflix;
         createVueApp();
         break;
@@ -16,14 +16,6 @@ switch(true) {
         break;
     case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.hboMaxSubstring):
         streamingPlatform = STREAMING_PLATFORM.hboMax;
-        createVueApp();
-        break;
-    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.disneyPlusSubstring):
-        streamingPlatform = STREAMING_PLATFORM.disneyPlus;
-        createVueApp();
-        break;
-    case hrefIncludesSubstring(STREAMING_PLATFORM_SUBSTRING.amazonPrimeVideoSubstring):
-        streamingPlatform = STREAMING_PLATFORM.amazonPrimeVideo;
         createVueApp();
         break;
 }

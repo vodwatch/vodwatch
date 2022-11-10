@@ -1,22 +1,25 @@
 <template>
     <div class="permissions-container" >
         <header class="permissions-header">
-            <BackToChatButton class="go-back-to-chat-button" @goBackToChat="goBackToChat"/>
+            <BackToChatButton class="go-back-to-chat-button" @goBackToChat="goBackToChat" />
             <HideButton
                 class="header-hide-button"
                 @hideWidget="hideWidget"/>
         </header>
         <div class="permissions-content">
             <div v-for="(permission, username) in permissions" :key="username">
-                <div>{{username}}</div>
+                <div class="username">
+                    {{username}}
+                    <KickButton @click="kickUser(String(username))" :disabled="!isAdmin"/>
+                </div>
+                User Permissions:
                 <div class="user-permissions">
-                    <label for="vod-control">VOD control:</label>
-                    <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl">
+                    <label for="vod-control">Video control:</label>
+                    <input type="checkbox" id="vod-control" v-model="permission.permissions.vodControl" :disabled="!isAdmin">
                     <label for="chat">Chat:</label>
-                    <input type="checkbox" id="chat" v-model="permission.permissions.chat">
+                    <input type="checkbox" id="chat" v-model="permission.permissions.chat" :disabled="!isAdmin">
                     <label for="kick">Kick:</label>
-                    <input type="checkbox" id="kick" v-model="permission.permissions.kick">
-                    <button @click="kickUser(String(username))"> X </button>
+                    <input type="checkbox" id="kick" v-model="permission.permissions.kick" :disabled="!isAdmin">
                 </div>
             </div>
         </div>
@@ -24,24 +27,22 @@
 </template>
 
 <script setup lang="ts">
-import HideButton from './HideButton.vue';
-import BackToChatButton from './BackToChatButton.vue';
-import { ref, watch, onMounted } from 'vue';
+import HideButton from './buttons/HideButton.vue';
+import BackToChatButton from './buttons/BackToChatButton.vue';
+import KickButton from './buttons/KickButton.vue';
+import {inject, ref, watch} from 'vue';
 import type { Ref } from 'vue';
 
 import type { UserPermissions } from "../modules/interfaces/interfaces";
 import { useSocketStore } from '../stores/socketStore';
 import { useUsersPermissionsStore } from '../stores/usersPermissionsStore';
 
-const props = defineProps({
-    isDev: {type: Boolean, required: false},
-});
-
 const emit = defineEmits(['hideWidget', 'goBackToChat']);
 
 const socketStore = useSocketStore();
 const userPermissionsStore = useUsersPermissionsStore();
 const permissions: Ref<UserPermissions[]> = ref(userPermissionsStore.usersPermissions);
+const isAdmin = inject<Ref<boolean>>('isAdmin');
 
 watch(permissions, (changedPermissions) => {
   userPermissionsStore.usersPermissions = changedPermissions;
@@ -59,35 +60,6 @@ const hideWidget = () => {
 const goBackToChat = () => {
     emit('goBackToChat');
 }
-
-onMounted(() => {
-    if (props.isDev) permissions.value = [
-        {
-            username: 'a',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        },
-        {
-            username: 'b',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        },
-        {
-            username: 'me',
-            permissions: {
-                vodControl: true,
-                chat: true,
-                kick: true,
-            }
-        }
-    ];
-})
 </script>
 
 <style scoped>
@@ -95,7 +67,7 @@ onMounted(() => {
         height: 60vh;
         border-radius: 5px;
         width: 20vw;
-        background-color: black;
+        background-color: #15202B;
         color: white;
     }
 
@@ -112,11 +84,16 @@ onMounted(() => {
         flex-direction: column;
         width: 20vw;
         height: 55vh;
+        gap: 2em;
     }
 
     .user-permissions {
         display: flex;
         gap: 0.25em
+    }
+
+    .user-permissions > input:disabled {
+        cursor: not-allowed;
     }
 
     .header-hide-button {
@@ -125,5 +102,11 @@ onMounted(() => {
 
     .go-back-to-chat-button {
         padding-right: 4em;
+    }
+
+    .username {
+        display: flex;
+        align-items: center;
+        gap: 3px;
     }
 </style>

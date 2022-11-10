@@ -1,23 +1,23 @@
 <template>
     <div>
         <button
-            @click="goToPermissions"
-            class="go-to-permissions-button">
-            <SettingsIcon class="settings-icon"/>
+            @click="hideWidget"
+            class="hide-widget-button">
+            <MinusIcon class="minus-icon"/>
         </button>
     </div>
 </template>
 
 <script setup>
-import SettingsIcon from "./SettingsIcon.vue";
-const emit = defineEmits(['goToPermissions']);
-const goToPermissions = () => {
-    emit('goToPermissions');
-}
+    import MinusIcon from "../icons/MinusIcon.vue";
+    const emit = defineEmits(['hideWidget']);
+    const hideWidget = () => {
+        emit('hideWidget');
+    }
 </script>
 
 <style scoped>
-    .go-to-permissions-button {
+    .hide-widget-button {
         all: unset;
         color: white;
         cursor: pointer;
@@ -28,15 +28,15 @@ const goToPermissions = () => {
         width: 25px;
     }
 
-    .settings-icon, .settings-icon:hover {
+    .minus-icon, .minus-icon:hover {
         transition: fill 0.1s ease-out 0s, box-shadow 0.15s cubic-bezier(0.47, 0.03, 0.49, 1.38) 0s;
     }
 
-    .settings-icon {
+    .minus-icon {
         fill:white !important;
     }
 
-    .settings-icon:hover {
+    .minus-icon:hover {
         fill: mediumpurple !important;
     }
 </style>

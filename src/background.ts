@@ -14,14 +14,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     case includesSubstring(STREAMING_PLATFORM_SUBSTRING.hboMaxSubstring, changeInfo.url):
       streamingPlatform = STREAMING_PLATFORM.hboMax;
       break;
-    case includesSubstring(STREAMING_PLATFORM_SUBSTRING.disneyPlusSubstring, changeInfo.url):
-      streamingPlatform = STREAMING_PLATFORM.disneyPlus;
-      break;
-    case includesSubstring(STREAMING_PLATFORM_SUBSTRING.amazonPrimeVideoSubstring, changeInfo.url):
-      streamingPlatform = STREAMING_PLATFORM.amazonPrimeVideo;
-      break;
     }
-    
+
     chrome.tabs.sendMessage(tabId, { text: "on video", streamingPlatform: streamingPlatform }, (message) => {
       return;
     });

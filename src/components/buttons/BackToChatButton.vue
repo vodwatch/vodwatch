@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import LeftArrowIcon from "./LeftArrowIcon.vue";
+import LeftArrowIcon from "../icons/LeftArrowIcon.vue";
 
 const emit = defineEmits(['goBackToChat'])
 const goBackToChat = () => {

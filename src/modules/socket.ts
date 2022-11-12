@@ -305,7 +305,7 @@ export class ClientSocketHandler {
             case STREAMING_PLATFORM.hboMax:
                 return document.getElementsByClassName('css-1rynq56 r-k200y')[0].innerHTML;
             case STREAMING_PLATFORM.youTube:
-                break;
+                return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink ytp-title-fullerscreen-link')[0].innerHTML;
             case STREAMING_PLATFORM.disneyPlus:
                 break;
             case STREAMING_PLATFORM.amazonPrimeVideo:

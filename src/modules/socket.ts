@@ -230,6 +230,7 @@ export class ClientSocketHandler {
                 SocketEventType.JOIN_ROOM,
                 roomId,
                 this.streamingPlatform,
+                this.getVideoId(),
                 this.getVideoTitle(),
                 (response: string) => {
                     if (response === "ROOM_NOT_FOUND") {
@@ -248,6 +249,7 @@ export class ClientSocketHandler {
             this.socket.emit(
                 SocketEventType.CREATE_ROOM,
                 this.streamingPlatform,
+                this.getVideoId(),
                 this.getVideoTitle(),
                 (response: string) => {
                     if (response === "ROOM_ALREADY_EXISTS") {
@@ -306,6 +308,23 @@ export class ClientSocketHandler {
                 return document.getElementsByClassName('css-1rynq56 r-k200y')[0].innerHTML;
             case STREAMING_PLATFORM.youTube:
                 return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink ytp-title-fullerscreen-link')[0].innerHTML;
+            case STREAMING_PLATFORM.disneyPlus:
+                break;
+            case STREAMING_PLATFORM.amazonPrimeVideo:
+                break;
+            default:
+                break;
+        }
+    }
+
+    getVideoId = () => {
+        switch(this.streamingPlatform) {
+            case STREAMING_PLATFORM.netflix:
+                return window.location.href.split("/")[4];
+            case STREAMING_PLATFORM.hboMax:
+                return window.location.href.split("/")[4];
+            case STREAMING_PLATFORM.youTube:
+                return window.location.href.split("=")[1];
             case STREAMING_PLATFORM.disneyPlus:
                 break;
             case STREAMING_PLATFORM.amazonPrimeVideo:

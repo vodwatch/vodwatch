@@ -27,4 +27,19 @@ const netflixSeek = (videoTime: number) => {
     console.log("Video is seeked!", videoTime);
 };
 
-export { netflixPlay, netflixPause, netflixSeek };
+const netflixGetSeason = (id: string | undefined) => {
+    const body = document.querySelector('body');
+    const seasonElement = document.createElement('div');
+    seasonElement.className = 'season-info';
+    body!.appendChild(seasonElement);
+    const getSeasonCode = `
+        document.getElementsByClassName('season-info')[0].innerHTML = netflix.falcorCache.videos[${id}].summary.value.season;`;   
+    document.documentElement.setAttribute("onreset", getSeasonCode);
+    document.documentElement.dispatchEvent(new CustomEvent("reset"));
+    const seasonId = document.getElementsByClassName('season-info')[0].innerHTML;
+    document.documentElement.removeAttribute("onreset");
+    body!.removeChild(seasonElement);
+    return seasonId;
+};
+
+export { netflixPlay, netflixPause, netflixSeek, netflixGetSeason };

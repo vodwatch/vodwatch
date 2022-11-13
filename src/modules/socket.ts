@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { netflixPlay, netflixPause, netflixSeek} from "./services/NetflixService";
+import { netflixPlay, netflixPause, netflixSeek, netflixGetSeason} from "./services/NetflixService";
 import { youTubePlay, youTubePause, youTubeSeek} from "./services/YouTubeService";
 import { Message, UserPermissions } from './interfaces/interfaces';
 import { EventInfo } from "./video";
@@ -303,15 +303,23 @@ export class ClientSocketHandler {
     getVideoTitle = () => {
         switch(this.streamingPlatform) {
             case STREAMING_PLATFORM.netflix:
-                return document.getElementsByClassName('ltr-er76rf')[0].innerHTML;
+                var title = document.getElementsByClassName('ltr-er76rf')[0].innerHTML;
+                if (title.startsWith("<h4>")) {
+                    const serieTitle = title.split('<h4>')[1].split('</h4>')[0]
+                    const seasinId = "S" + netflixGetSeason(this.getVideoId()); 
+                    const episodeId = title.split('<span>')[1].split('</span>')[0];
+                    return serieTitle + " " + seasinId + " " + episodeId;
+                }
+                return title;
             case STREAMING_PLATFORM.hboMax:
-                return document.getElementsByClassName('css-1rynq56 r-k200y')[0].innerHTML;
+                var title = document.getElementsByClassName('css-1rynq56 r-k200y')[0].innerHTML.split('(')[0];
+                const seasonAndEpisode = document.getElementsByClassName('css-1rynq56 r-k200y')[1].innerHTML.split(':')[0];
+                if (seasonAndEpisode) {
+                    return title + seasonAndEpisode;
+                }
+                return title;
             case STREAMING_PLATFORM.youTube:
                 return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink ytp-title-fullerscreen-link')[0].innerHTML;
-            case STREAMING_PLATFORM.disneyPlus:
-                break;
-            case STREAMING_PLATFORM.amazonPrimeVideo:
-                break;
             default:
                 break;
         }
@@ -320,15 +328,11 @@ export class ClientSocketHandler {
     getVideoId = () => {
         switch(this.streamingPlatform) {
             case STREAMING_PLATFORM.netflix:
-                return window.location.href.split("/")[4];
+                return window.location.href.split("/")[4].split("?")[0];
             case STREAMING_PLATFORM.hboMax:
-                return window.location.href.split("/")[4];
+                return window.location.href.split(":")[4].split("?")[0];
             case STREAMING_PLATFORM.youTube:
                 return window.location.href.split("=")[1];
-            case STREAMING_PLATFORM.disneyPlus:
-                break;
-            case STREAMING_PLATFORM.amazonPrimeVideo:
-                break;
             default:
                 break;
         }

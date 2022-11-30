@@ -20,7 +20,7 @@ const SocketEventType = {
 };
 
 export class ClientSocketHandler {
-    private readonly serverUrl: string = "http://localhost:5000";
+    private readonly serverUrl: string = "https://vodwatch-backend.herokuapp.com/";
     private socket!: Socket;
     private video!: HTMLVideoElement;
     private chatMessages!: Message[];
@@ -56,12 +56,6 @@ export class ClientSocketHandler {
                                 case STREAMING_PLATFORM.youTube:
                                     youTubeSeek(message.currentTime);
                                     break;
-                                case STREAMING_PLATFORM.disneyPlus:
-                                    console.log("Disney+ video is seeked!");
-                                    break;
-                                case STREAMING_PLATFORM.amazonPrimeVideo:
-                                    console.log("Amazon Prime Video video is seeked!");
-                                    break;
                                 default:
                                     this.video.currentTime = message.currentTime;
                                     break;
@@ -77,12 +71,6 @@ export class ClientSocketHandler {
                                 break;
                             case STREAMING_PLATFORM.youTube:
                                 youTubePlay();
-                                break;
-                            case STREAMING_PLATFORM.disneyPlus:
-                                console.log("Disney+ video is played!");
-                                break;
-                            case STREAMING_PLATFORM.amazonPrimeVideo:
-                                console.log("Amazon Prime Video video is played!");
                                 break;
                             default:
                                 this.video.play();
@@ -100,12 +88,6 @@ export class ClientSocketHandler {
                             case STREAMING_PLATFORM.youTube:
                                 youTubePause();
                                 break;
-                            case STREAMING_PLATFORM.disneyPlus:
-                                console.log("Disney+ video is paused!");
-                                break;
-                            case STREAMING_PLATFORM.amazonPrimeVideo:
-                                console.log("Amazon Prime Video video is paused!");
-                                break;
                             default:
                                 this.video.pause();
                                 break;
@@ -122,12 +104,6 @@ export class ClientSocketHandler {
                             case STREAMING_PLATFORM.youTube:
                                 youTubeSeek(message.currentTime)
                                 break;
-                            case STREAMING_PLATFORM.disneyPlus:
-                                console.log("Disney+ video is seeked!");
-                                break;
-                            case STREAMING_PLATFORM.amazonPrimeVideo:
-                                console.log("Amazon Prime Video video is seeked!");
-                                break;
                             default:
                                 this.video.currentTime = message.currentTime;
                                 break;
@@ -141,13 +117,10 @@ export class ClientSocketHandler {
         );
 
         this.socket.on(SocketEventType.PERMISSIONS, (message: UserPermissions[]) => {
-            this.userPermissionsStore.usersPermissions = message;
-            console.log("received updated permissions", message);
-            // check if current user is present on the list of permissions
+            this.userPermissionsStore.usersPermissions = message;// check if current user is present on the list of permissions
             // if not - he is kicked from the room
-            console.log(message[this.socket.id]);
             if(!message[this.socket.id]) {
-                console.log(console.log("You have been kicked from the room!"));
+                console.log("You have been kicked from the room!");
                 this.socket.disconnect();
             }
         });
@@ -198,12 +171,6 @@ export class ClientSocketHandler {
                         case STREAMING_PLATFORM.youTube:
                             youTubePlay();
                             break;
-                        case STREAMING_PLATFORM.disneyPlus:
-                            console.log("Disney+ video is played!");
-                            break;
-                        case STREAMING_PLATFORM.amazonPrimeVideo:
-                            console.log("Amazon Prime Video video is played!");
-                            break;
                         default:
                             this.video.play();
                             break;
@@ -220,12 +187,6 @@ export class ClientSocketHandler {
                         case STREAMING_PLATFORM.youTube:
                             youTubePause();
                             break;
-                        case STREAMING_PLATFORM.disneyPlus:
-                            console.log("Disney+ video is paused!");
-                            break;
-                        case STREAMING_PLATFORM.amazonPrimeVideo:
-                            console.log("Amazon Prime Video video is paused!");
-                            break;
                         default:
                             this.video.pause();
                             break;
@@ -241,12 +202,6 @@ export class ClientSocketHandler {
                             break;
                         case STREAMING_PLATFORM.youTube:
                             youTubeSeek(this.supposedCurrentTime);
-                            break;
-                        case STREAMING_PLATFORM.disneyPlus:
-                            console.log("Disney+ video is seeked!");
-                            break;
-                        case STREAMING_PLATFORM.amazonPrimeVideo:
-                            console.log("Amazon Prime Video video is seeked!");
                             break;
                         default:
                             this.video.currentTime = this.supposedCurrentTime;
@@ -323,14 +278,13 @@ export class ClientSocketHandler {
         this.checkForErrors();
         return new Promise((resolve, reject) => {
             if(this.socket.id === username) {
-                console.log("u cant kick yourself");
                 reject("You can't kick yourself!");
             }
             this.socket.emit(
                 SocketEventType.KICK_USER,
                 username,
                 (response: any) => {
-                    if (response === "ROOM_NOT_FOUND" || 
+                    if (response === "ROOM_NOT_FOUND" ||
                         response === "OPERATION_NOT_ALLOWED") {
                         reject(response);
                     }

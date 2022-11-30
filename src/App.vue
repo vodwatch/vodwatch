@@ -1,31 +1,14 @@
 <template>
-    <div id="app">
-        <label>Dev</label>
-        <input type="checkbox" v-model="isDev">
-        <button
-            @click="hideOrShowWidget()"
-            class="show-widget"
-            v-if="showWidget">
-          Hide widget.
-        </button>
-        <button
-            @click="hideOrShowWidget()"
-            class="show-widget"
-            v-else>
-          Show widget.
-        </button>
+    <div
+        id="app"
+        :class="showWidget ? 'app-position-when-opened' : 'app-position-when-closed'">
         <div v-if="showWidget">
-          <RoomConnect v-if="!isConnected" :is-dev="isDev" @joinRoomSuccess="joinRoomSuccess" />
-          <Chat v-if="isConnected && !showPermissionView" :is-dev="isDev"/>
-          <button
-            v-if="isConnected && !showPermissionView" @click="changePermissionView">
-            Manage Permissions
-          </button>
-          <PermissionView v-if="isConnected && showPermissionView" :is-dev="isDev" />
-          <button
-            v-if="isConnected && showPermissionView" @click="changePermissionView">
-            Go back to chat
-          </button>
+            <RoomConnect v-if="!isConnected" @joinRoomSuccess="joinRoomSuccess" @hideWidget="hideOrShowWidget"/>
+            <Chat v-if="isConnected && !showPermissionView" @hideWidget="hideOrShowWidget" @goToPermissions="changePermissionView" />
+            <PermissionView v-if="isConnected && showPermissionView" @hideWidget="hideOrShowWidget" @goBackToChat="changePermissionView"/>
+        </div>
+        <div v-else class="minimized-widget" @click="hideOrShowWidget">
+            V
         </div>
     </div>
 </template>
@@ -45,10 +28,9 @@ onMounted(() => {
   videoStore.videoHandler.addVideoEventListeners();
 })
 
-const socketStore = useSocketStore();  
-const showWidget: Ref<boolean> = ref(true);
+const socketStore = useSocketStore();
+const showWidget: Ref<boolean> = ref(false);
 const isConnected: Ref<boolean> = ref(false);
-const isDev: Ref<boolean> = ref(false);
 const showPermissionView: Ref<boolean> = ref(false);
 
 const hideOrShowWidget = () => {
@@ -71,32 +53,92 @@ socketStore.socket.streamingPlatform = inject('streamingPlatform');
 const changePermissionView = () => {
   showPermissionView.value = !showPermissionView.value;
 }
-const fontSize = ref(DEFAULT_FONT_SIZE);
 
+const isAdmin = ref(false);
+provide('isAdmin', isAdmin);
+
+const fontSize = ref(DEFAULT_FONT_SIZE)
 provide('fontSize', fontSize);
 </script>
 
 <style>
-  * {
-    font-size: v-bind(fontSize);
-  }
-  #app {
-    position: fixed;
-    top: 1vh;
-    right: 2vw;
-    width: 15vw;
-    z-index: 1000000;
-  }
-  .show-widget {
-    text-align: right;
-    width: 15vw;
-  }
-  a:link, a:visited {
-    color: white;
-    cursor: pointer;
-  }
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
-  a:link:active, a:visited:active {
-    color: mediumpurple;
-  }
+    * {
+        font-size: v-bind(fontSize);
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+        position: fixed;
+        z-index: 1000000;
+    }
+
+    .app-position-when-opened {
+        top: 6vh;
+        width: 15vw;
+        left: 79vw;
+    }
+
+    .app-position-when-closed {
+        top: 90vh;
+        right: 4vw;
+    }
+
+    .minimized-widget {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Fredoka One',serif;
+        border-radius: 50%;
+        background-color: antiquewhite;
+        font-size: 20px;
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+        box-shadow:  1.8px 1.2px rgba(0, 0, 0, 0.034),
+        0 3.7px 2.3px rgba(0, 0, 0, 0.048),
+        0 3.5px 2px rgba(0, 0, 0, 0.06),
+        0 5.3px 5.9px rgba(0, 0, 0, 0.072),
+        0 10.8px 7.4px rgba(0, 0, 0, 0.086),
+        0 12.5px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .minimized-widget:hover {
+        height: 80px;
+        width: 80px;
+        font-size: 35px;
+        margin-right: -20px !important;
+        margin-top: -20px !important;
+        box-shadow:  2.8px 2.2px rgba(0, 0, 0, 0.034),
+        0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+        0 6.5px 5px rgba(0, 0, 0, 0.06),
+        0 11.3px 10.9px rgba(0, 0, 0, 0.072),
+        0 20.8px 15.4px rgba(0, 0, 0, 0.086),
+        0 25px 20px rgba(0, 0, 0, 0.12);
+        animation: hoverOnMinimizedWidget 1s;
+    }
+
+    @keyframes hoverOnMinimizedWidget {
+        0% {
+          transform: scale(0.5);
+        }
+        50% {
+          transform: scale(1.5);
+        }
+        100% {
+          transform: scale(1);
+        }
+    }
+
+
+    a:link, a:visited {
+        color: white;
+        cursor: pointer;
+    }
+
+    a:link:active, a:visited:active {
+        color: mediumpurple;
+    }
 </style>
